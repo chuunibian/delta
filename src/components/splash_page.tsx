@@ -135,38 +135,21 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
   // Temporary just to show how it works
   const runScan = async (target: string) => {
     try {
-      // TODO The root has sep backend logic it is not same as lazy load
-      // Thus need to look into it
 
-      // I think the entry point which is disk_scan needs to also take the flag and decide what to use
-      // that is one way to do it
       console.time("invoke");
       const result = await invoke<DirView>('disk_scan', {target, snapshotFile, snapshotFlag});
       console.timeEnd("invoke");
-  
-      // if (snapshotFlag) {
-      //   console.time("new decoup comp save")
-      //   const err =  await invoke<DirView>('root_prev_info', {snapshotFile})
-      //   console.timeEnd(" ")
-      // }
 
       const zustandInitFunc = userStore.getState().initDirData;
 
       if (saveCurrentSnapshotFlag) { // if that checkbox is checked then run the write func
-        console.time("write tree")
-        const selectedDiskLetter = target[0] // needs to get the first letter? of this string? TODO THIS IS JANKY MAYBE
-        const temp = await invoke('write_current_tree', {selectedDiskLetter}); // that func will require the letter chosen
-        console.timeEnd("write tree")
+        const selectedDiskLetter = target[0] // first letter of the screen can be more defensive however
+        const temp = await invoke('write_current_tree', {selectedDiskLetter});
       }
       
-      // This is the inital response from the backend 
-      // thus you need to init the global state
-      // pass in the result zustand
-      console.time("zustand");
       zustandInitFunc(result);
-      console.timeEnd("zustand");
 
-      setWhichField(false); // temp switch state here!! this is for the once scan done goes to analytics
+      setWhichField(false); // state switch to anallytics screen
       
     } catch(e) {
       console.log(e)
@@ -184,7 +167,6 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
       {/* Test data table for snapshots, datatable should be generic */}
       <Card className='p-3 min-w-[350px]'>
         <DataTable columns={columns} data={snapshotFiles} rowSelection={rowSelection} setRowSelection={setRowSelection} ></DataTable>
-        {/* <p>{getSelectedSnapshot()?.date_sort_key}</p> */}
         {/* <p>{snapshotFile}</p> */}
       </Card>
     
@@ -204,7 +186,7 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
           <Separator></Separator>
           {/* Dry run checkbox */}
           <div className="flex items-start gap-3">
-            <Checkbox id="terms-2" checked={snapshotFlag} onCheckedChange={setSnapshotFlag}/>
+            <Checkbox id="terms-2" disabled={snapshotFile===""} checked={snapshotFlag} onCheckedChange={setSnapshotFlag}/>
             <div className="grid gap-2">
               <Label htmlFor="terms-2">Compare Snapshots</Label>
               <p className="text-muted-foreground text-sm">

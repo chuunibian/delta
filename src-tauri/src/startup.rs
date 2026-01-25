@@ -16,6 +16,8 @@
 use std::fs;
 use std::path::Path;
 
+use serde_json::map::Entry;
+
 pub fn manage_binary_db_files(local_appdata_path: &Path) -> std::io::Result<()> {
     // println!("{}", local_appdata_path.display());
 
@@ -41,6 +43,46 @@ pub fn manage_binary_db_files(local_appdata_path: &Path) -> std::io::Result<()> 
 // pub fn startup_local_data_cleaner() {
 
 // }
+
+pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    let snapshot_folder = local_appdata_path.join("tempsnapshot");
+
+    if snapshot_folder.exists() {
+        let entries = fs::read_dir(snapshot_folder)?;
+
+        for entry_result in entries {
+            let entry = entry_result?;
+            let entry_path = entry.path();
+            let entry_path_string = entry.file_name().to_string_lossy().to_string();
+            let file_name_parts: Vec<&str> = entry_path_string.split('_').collect();
+
+            if file_name_parts.len() != 3 {
+                fs::remove_file(entry_path)?;
+                return Err(
+                    "A file in the local storage failed to satisfy name constraints".into(),
+                );
+            }
+
+            if file_name_parts[0].len() != 1 {
+                fs::remove_file(entry_path)?;
+                return Err(
+                    "A file in the local storage failed to satisfy name constraints. Drive letter is wrong".into(),
+                );
+            }
+
+            // date is big endian and always 12
+            if file_name_parts[1].len() != 12 {
+                fs::remove_file(entry_path)?;
+                return Err(
+                    "A file in the local storage failed to satisfy name constraints. Date is wrong"
+                        .into(),
+                );
+            }
+        }
+    }
+
+    Ok(())
+}
 
 pub fn manage_local_appdata_app_folder(local_appdata_path: &Path) -> std::io::Result<()> {
     fs::create_dir_all(local_appdata_path.join("tempsnapshot"))?; // recursive dir create all, everything in the given path

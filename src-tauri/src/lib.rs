@@ -31,6 +31,8 @@ pub fn run() {
                 .expect("Unable to create local app appdata folder (assuming it not existing)");
             startup::manage_binary_db_files(&local_appdata_path)
                 .expect("Unable to manage db files in local appdata");
+            startup::appdata_folder_check(&local_appdata_path)
+                .expect("File with improper name was found and removed in local data store.");
 
             let state = BackendState {
                 file_tree: std::sync::Mutex::new(None),

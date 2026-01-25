@@ -118,7 +118,7 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
 
     snapshotFlag: false, // Compare with snapshots? default to do not compare snapshots
 
-    prevSnapshotFilePath: "ERR_000", // temp name for when there is nothing set and nothing chosen
+    prevSnapshotFilePath: "", // temp name for when there is nothing set and nothing chosen will be empty str
 
     // IMPORTANT FUNCTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Note that this func uses 2 global state when lazy loading
