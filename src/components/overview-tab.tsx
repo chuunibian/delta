@@ -13,37 +13,35 @@ import {
 } from "lucide-react";
 import { userStore } from "./store";
 import { filesize } from "filesize";
+import { current } from "immer";
 
 export default function Overview() {
-  const file = {
-    name: "target",
-    extension: "dir",
-    path: "/Users/dev/projects/disk-analyzer/src-tauri/target",
-    size: "8.4 GB",
-    modified: "Just now",
-    // Snapshot Logic Mocked:
-    hasChanged: true,
-    isGrowth: true, // It grew
-    diffValue: "1.2 GB",
-    prevSize: "7.2 GB"
-  };
+
 
   const currentNode = userStore((state) => state.currentEntryData)
 
-  const current_size = filesize(Number(currentNode.size), { base: 2, standard: "jedec"}) as string
+  const current_size = currentNode.size
+  const current_size_str = filesize(Number(current_size), { base: 2, standard: "jedec"}) as string
 
-  const prev_size = currentNode.diff ? (filesize(Number(currentNode.diff.prevsize), { base: 2, standard: "jedec"}) as string) : ("-") 
-
-  let prev_file_count = "-";
-  let prev_folder_count = "-";
+  const prev_size = currentNode.diff ? (currentNode.diff.prevsize) : (0);
+  const prev_size_str = currentNode.diff ? (filesize(Number(currentNode.diff.prevsize), { base: 2, standard: "jedec"}) as string) : ("-") 
+  
+  let prev_file_count_str = "-";
+  let prev_folder_count_str = "-";
+  let prev_file_count = 0;
+  let prev_folder_count = 0;
   
   if (currentNode.directory) { // if directory, also check if node.diff
-    prev_file_count = currentNode.diff ? String(currentNode.diff.prevnumfiles) : ("-")
-    prev_folder_count = currentNode.diff ? String(currentNode.diff.prevnumsubdir) : ("-")
+    prev_file_count = currentNode.diff ? (currentNode.diff.prevnumfiles) : (0);
+    prev_folder_count = currentNode.diff ? (currentNode.diff.prevnumsubdir) : (0);
+    prev_file_count_str = currentNode.diff ? String(currentNode.diff.prevnumfiles) : ("-")
+    prev_folder_count_str = currentNode.diff ? String(currentNode.diff.prevnumsubdir) : ("-")
   }
   
-  const curr_file_count = currentNode.numsubfiles ? String(currentNode.numsubfiles) : ("0");
-  const curr_folder_count = currentNode.numsubdir ? String(currentNode.numsubdir) : ("0");
+  const curr_folder_count = currentNode.numsubdir ? (currentNode.numsubdir) : (0);
+  const curr_file_count = currentNode.numsubfiles ? (currentNode.numsubfiles) : (0);
+  const curr_file_count_str = currentNode.numsubfiles ? String(currentNode.numsubfiles) : ("0");
+  const curr_folder_count_str = currentNode.numsubdir ? String(currentNode.numsubdir) : ("0");
 
 
   return (
@@ -74,7 +72,7 @@ export default function Overview() {
             </span>
             <p className="text-xs font-bold tracking-tight text-foreground">
                 {
-                current_size
+                current_size_str
                 }
             </p>
         </div>
@@ -84,7 +82,7 @@ export default function Overview() {
             </span>
             <p className="text-xs font-bold tracking-tight text-foreground">
                 {
-                prev_size
+                prev_size_str
                 }
             </p>
         </div>
@@ -94,18 +92,18 @@ export default function Overview() {
             </span>
             <p className="text-xs font-bold tracking-tight text-foreground">
                 {
-                current_size
+                currentNode.diff? (current_size - prev_size) : ("-")
                 }
             </p>
         </div>
 
         {/* Subdir row */}
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+        <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
             <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
                 <FolderTree className="h-3 w-3" /> Subdirs
             </span>
             <p className="text-xs font-medium pt-1">
-                {curr_folder_count}
+                {curr_folder_count_str}
             </p>
         </div>
         <div className="p-3 rounded-lg bg-muted/40 space-y-1">
@@ -113,7 +111,7 @@ export default function Overview() {
                 <FolderTree className="h-3 w-3" /> Prev Subdirs
             </span>
             <p className="text-xs font-medium pt-1">
-                {prev_folder_count}
+                {prev_folder_count_str}
             </p>
         </div>
         <div className="p-3 rounded-lg bg-muted/40 space-y-1">
@@ -121,19 +119,19 @@ export default function Overview() {
                 <FolderTree className="h-3 w-3" /> Subdir Change
             </span>
             <p className="text-sm font-medium pt-1">
-                {file.modified}
+                {(currentNode.diff && currentNode.directory) ? (curr_folder_count - prev_folder_count) : ("-")}
             </p>
         </div>
         
         
 
         {/* File Row */}
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+        <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
             <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
                 <Folder className="h-3 w-3" /> Files
             </span>
             <p className="text-xs font-medium pt-1">
-                {curr_file_count}
+                {curr_file_count_str}
             </p>
         </div>
         <div className="p-3 rounded-lg bg-muted/40 space-y-1">
@@ -141,7 +139,7 @@ export default function Overview() {
                 <Folder className="h-3 w-3" /> Prev Files
             </span>
             <p className="text-xs font-medium pt-1">
-                {prev_file_count}
+                {prev_file_count_str}
             </p>
         </div>
         <div className="p-3 rounded-lg bg-muted/40 space-y-1">
@@ -149,30 +147,25 @@ export default function Overview() {
                 <Folder className="h-3 w-3" /> Files Change
             </span>
             <p className="text-sm font-medium pt-1">
-                {file.modified}
+                {(currentNode.diff && currentNode.directory) ? (curr_file_count - prev_file_count) : ("-")}
             </p>
         </div>
       </div>
 
-      {/* <div className="flex items-center gap-2 w-full">
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
-        <HardDrive className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-red-600">+1.2GB</span>
-        <span className="text-xs text-muted-foreground border-l pl-2 ml-1">Size</span>
+
+      <div className="flex items-center gap-2 w-full">
+      <div className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
+        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="font-medium text-gray-300">{currentNode.created?.toLocaleDateString() || "N/A"}</span>
+        <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Created</span>
       </div>
 
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
-        <File className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-green-600">+142</span>
-        <span className="text-xs text-muted-foreground border-l pl-2 ml-1">Files</span>
+      <div className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
+        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="font-medium text-gray-300">{currentNode.modified?.toLocaleDateString() || "N/A"}</span>
+        <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Modified</span>
       </div>
-
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
-        <Folder className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-blue-600">+5</span>
-        <span className="text-xs text-muted-foreground border-l pl-2 ml-1">Folders</span>
-      </div>
-     </div> */}
+     </div>
 
       {/* { currentNode.diff && (
         <div className="space-y-2">

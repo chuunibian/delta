@@ -23,8 +23,8 @@ interface DirViewMeta {
 
   diff?: DirViewMetaDiff;
 
-  created: Date;
-  modified: Date;
+  created: { secs_since_epoch: number, nanos_since_epoch: number };
+  modified: { secs_since_epoch: number, nanos_since_epoch: number };
 }
 
 interface File {
@@ -38,8 +38,8 @@ export interface FileViewMeta {
 
   diff?: FileViewMetaDiff;
 
-  created: Date;
-  modified: Date;
+  created: { secs_since_epoch: number, nanos_since_epoch: number };
+  modified: { secs_since_epoch: number, nanos_since_epoch: number };
 }
 
 interface DirView {
@@ -65,6 +65,8 @@ interface TreeDataNode {
     size?: number;
     numsubdir?: number;
     numsubfiles?: number;
+    created?: Date;
+    modified?: Date;
     diff?: { // represents prev snapshot data it is ? checking if it is undef acts as a cond rend flag
       prevnumsubdir?: number;
       prevnumfiles?: number;
@@ -134,7 +136,6 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
         // const snapshot_mode = state.snapshot_mode;
         const { prevSnapshotFilePath } = get();
 
-        // 1. ASYNC BACKEND CALL
         const result: DirViewChildren = await invoke<DirViewChildren>(
             'query_new_dir_object',
             { pathList, snapshotFlag, prevSnapshotFilePath }
@@ -158,10 +159,13 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                   prevsize: subdir.meta.diff.previous_size,
                 } : undefined,
 
+                created: new Date(subdir.meta.created.secs_since_epoch * 1000),
+
+                modified: new Date(subdir.meta.modified.secs_since_epoch * 1000),
+
                 path: `${currentNode.path}\\${subdir.name}`,
                 children: [],
                 directory: true,
-
             }));
 
             // TODO May need to use directory flag to make coniditonal rendering for the overview!!
@@ -179,6 +183,10 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                   // OR leave it out and just use teh directory flag to conditional it
                 } : undefined,
                 directory: false,
+
+                created: new Date(file.meta.created.secs_since_epoch * 1000),
+
+                modified: new Date(file.meta.modified.secs_since_epoch * 1000),
             }));
 
             const newChildren = [...subdirs, ...files];
