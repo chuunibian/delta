@@ -1,78 +1,8 @@
 import { create } from "zustand";
-import { produce } from "immer";
 import { invoke } from "@tauri-apps/api/core";
 import { Folder, FolderOpen, Underline, File, Loader2 } from "lucide-react";
-import { ta } from "zod/v4/locales";
+import { DirView, DirViewChildren, TreeDataNode } from "@/types";
 
-interface DirViewMetaDiff {
-    new_dir_flag: boolean,
-    previous_size: number,
-    prev_num_files: number,
-    prev_num_subdir: number,
-}
-
-interface FileViewMetaDiff {
-    new_file_flag: boolean,
-    previous_size: number,
-}
-
-interface DirViewMeta {
-  size: number;
-  num_files: number;
-  num_subdir: number;
-
-  diff?: DirViewMetaDiff;
-
-  created: { secs_since_epoch: number, nanos_since_epoch: number };
-  modified: { secs_since_epoch: number, nanos_since_epoch: number };
-}
-
-interface File {
-  meta: FileViewMeta;
-  name: string;
-  id: string;
-}
-
-export interface FileViewMeta {
-  size: number;
-
-  diff?: FileViewMetaDiff;
-
-  created: { secs_since_epoch: number, nanos_since_epoch: number };
-  modified: { secs_since_epoch: number, nanos_since_epoch: number };
-}
-
-interface DirView {
-  meta: DirViewMeta;
-  name: string;
-  id: string;
-}
-
-interface DirViewChildren {
-  subdirviews: DirView[];
-  files: File[];
-}
-
-interface TreeDataNode {
-    id: string;
-    name: string;
-    directory: boolean;
-    icon?: any;
-    selectedIcon?: any;
-    openIcon?: any;
-    children?: TreeDataNode[];
-    path?: string;
-    size?: number;
-    numsubdir?: number;
-    numsubfiles?: number;
-    created?: Date;
-    modified?: Date;
-    diff?: { // represents prev snapshot data it is ? checking if it is undef acts as a cond rend flag
-      prevnumsubdir?: number;
-      prevnumfiles?: number;
-      prevsize?: number;
-    }
-}
 // To get the path we could traverse up the tree or we could store it as a field in the interface
 // the root is the global state, everything else is helper functions
 interface FrontEndFileSystemStore {
@@ -122,12 +52,10 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
 
     prevSnapshotFilePath: "", // temp name for when there is nothing set and nothing chosen will be empty str
 
-    // IMPORTANT FUNCTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Note that this func uses 2 global state when lazy loading
     // The snapshotFlag bool which is to or not to compare with previous snapshot 
     // The current Selected previous snapshot file to comapre to (it is a string) and helps frontend query the previous snapshots
     // ^ Specifically it has the drive letter, date, and size. A func in the abckend will append this to something to query from taht db file
-    //
     addNewDirView: async (currentNode, pathList) => {    
     try {
 
@@ -142,8 +70,6 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
         );
 
         userStore.setState((state) => {
-
-            console.log(result)
             
             const subdirs = result.subdirviews.map((subdir) => ({ // It seems these are the actual nodes that the tree uses for each node!
                 id: subdir.id, 
@@ -178,7 +104,6 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                 diff: file.meta.diff ? {
                   new_flag: file.meta.diff.new_file_flag,
                   prevsize: file.meta.diff.previous_size,
-                  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                   // I think since this is file it needs to have uninited diff fields to something that is deafult
                   // OR leave it out and just use teh directory flag to conditional it
                 } : undefined,
@@ -216,7 +141,6 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
     },
 
     changeCurrentOverviewNode: (currentTreeNode) => { // Note this creates copies I think I dont know if this will ever be a perfoamcen factor or bad desing that needs a diff approach
-      console.log(currentTreeNode)
       userStore.setState({currentEntryData: currentTreeNode})
     },
 
@@ -242,9 +166,6 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
               } : undefined,
               directory: true, // root shoudl always be a folder
             };
-            
-            console.log("DEBUG3")
-            console.log(initRoot)
 
             return { // init current states
               root: initRoot,

@@ -38,6 +38,7 @@ const TreeHeader = () => (
 );
 
 const SimpleNode = ({ node, style, dragHandle }: any) => {
+
   const addNewDirView = userStore((state) => state.addNewDirView);
   const changeCurrentPath = userStore((state) => state.changeCurrentPath);
   const updateCurrentClickedOverview = userStore((state) => state.changeCurrentOverviewNode);
@@ -78,11 +79,11 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
         ${node.isSelected ? 'bg-gray-700' : ''}
       `}
       onClick={() => {
-        node.toggle();
         updateCurrentClickedOverview(node.data);
         if (!node.isOpen && !node.isLeaf && (!node.data.children || node.data.children.length === 0)) {
           addNewDirView(node.data, parsePathToSegment(node.data.path));
         }
+        node.toggle();
       }}
       onMouseEnter={
         () => {
@@ -102,6 +103,7 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
             style={{ left: `${i * INDENT_SIZE}px` }}
           />
         ))} */}
+        {/* node.data.children?.length > 0  */}
       </div>
 
       <div className="flex flex-1 items-center border-b border-gray-600/50 min-w-0">
@@ -181,6 +183,7 @@ function TestFileTreeSecond() {
                 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
                 dark:hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400"
             overscanCount={20}
+            openByDefault={false}
           />
         </div>
       </div>
