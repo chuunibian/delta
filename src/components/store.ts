@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
 import { Folder, FolderOpen, Underline, File, Loader2 } from "lucide-react";
 import { DirView, DirViewChildren, TreeDataNode } from "@/types";
+import { appendPaths } from "@/lib/utils";
 
 // To get the path we could traverse up the tree or we could store it as a field in the interface
 // the root is the global state, everything else is helper functions
@@ -89,7 +90,7 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
 
                 modified: new Date(subdir.meta.modified.secs_since_epoch * 1000),
 
-                path: `${currentNode.path}\\${subdir.name}`,
+                path: appendPaths(currentNode.path, subdir.name), // tauri might have a path append dynamically function
                 children: [],
                 directory: true,
             }));
@@ -99,7 +100,7 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                 id: file.id, 
                 name: file.name,
                 size: file.meta.size,
-                path: `${currentNode.path}\\${file.name}`,
+                path: appendPaths(currentNode.path, file.name),
                 // sql db stuff
                 diff: file.meta.diff ? {
                   new_flag: file.meta.diff.new_file_flag,
@@ -147,6 +148,8 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
     initDirData: (initial) => {
         // takes in initial dir view which is unexpanded X:\        
         // change the root based on the passed in stuff
+        console.log(initial)
+
         userStore.setState((state) => {
 
             const initRoot = {

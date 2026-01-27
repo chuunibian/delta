@@ -1,8 +1,7 @@
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { 
-  Folder, // Changed to Folder for this example
+  Folder,
   File,
   TrendingUp, 
   HardDrive, 
@@ -13,7 +12,9 @@ import {
 } from "lucide-react";
 import { userStore } from "./store";
 import { filesize } from "filesize";
-import { current } from "immer";
+import { Button } from "./ui/button";
+
+import { openPath, openUrl, revealItemInDir } from '@tauri-apps/plugin-opener';
 
 export default function Overview() {
 
@@ -43,175 +44,147 @@ export default function Overview() {
   const curr_file_count_str = currentNode.numsubfiles ? String(currentNode.numsubfiles) : ("0");
   const curr_folder_count_str = currentNode.numsubdir ? String(currentNode.numsubdir) : ("0");
 
+  const test_reveal_opener = async (path) => {
+    await revealItemInDir(path);
+  }
 
   return (
     <div className="w-full h-full flex flex-col p-2 gap-3">
       
-      <div className="flex flex-col items-center text-center justify-center p-1">
-            <div className="flex flex-row items-center gap-2 text-center">
-                <h2 className="font-bold text-base tracking-tight">
-                    {currentNode.name}
-                </h2>
-            </div>
-            <div className="flex gap-2 mt-3 items-center">
-                {currentNode.directory ? (<Folder className="h-4 w-4 text-muted-foreground"></Folder>) : (<File className="h-4 w-4 text-muted-foreground"></File>)}
-                <Badge variant="secondary" className="font-normal text-xs text-muted-foreground">
-                    {currentNode.directory ? 'Directory' : 'File'}
-                </Badge>
-                <Badge variant="outline" className="font-normal text-xs text-muted-foreground font-mono">
-                    id: {currentNode.id}
-                </Badge>
-            </div>
-      </div>
-      
-      {/* Size row */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <HardDrive className="h-3 w-3" /> Size
-            </span>
-            <p className="text-xs font-bold tracking-tight text-foreground">
-                {
-                current_size_str
-                }
-            </p>
-        </div>
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <HardDrive className="h-3 w-3" /> Previous Size
-            </span>
-            <p className="text-xs font-bold tracking-tight text-foreground">
-                {
-                prev_size_str
-                }
-            </p>
-        </div>
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <HardDrive className="h-3 w-3" /> Size Change
-            </span>
-            <p className="text-xs font-bold tracking-tight text-foreground">
-                {
-                currentNode.diff? (current_size - prev_size) : ("-")
-                }
-            </p>
-        </div>
-
-        {/* Subdir row */}
-        <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <FolderTree className="h-3 w-3" /> Subdirs
-            </span>
-            <p className="text-xs font-medium pt-1">
-                {curr_folder_count_str}
-            </p>
-        </div>
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <FolderTree className="h-3 w-3" /> Prev Subdirs
-            </span>
-            <p className="text-xs font-medium pt-1">
-                {prev_folder_count_str}
-            </p>
-        </div>
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <FolderTree className="h-3 w-3" /> Subdir Change
-            </span>
-            <p className="text-sm font-medium pt-1">
-                {(currentNode.diff && currentNode.directory) ? (curr_folder_count - prev_folder_count) : ("-")}
-            </p>
+        <div className="flex flex-col items-center text-center justify-center p-1">
+                <div className="flex flex-row items-center gap-2 text-center">
+                    <h2 className="font-bold text-base tracking-tight">
+                        {currentNode.name}
+                    </h2>
+                </div>
+                <div className="flex gap-2 mt-3 items-center">
+                    {currentNode.directory ? (<Folder className="h-4 w-4 text-muted-foreground"></Folder>) : (<File className="h-4 w-4 text-muted-foreground"></File>)}
+                    <Badge variant="secondary" className="font-normal text-xs text-muted-foreground">
+                        {currentNode.directory ? 'Directory' : 'File'}
+                    </Badge>
+                    <Badge variant="outline" className="font-normal text-xs text-muted-foreground font-mono">
+                        id: {currentNode.id}
+                    </Badge>
+                </div>
         </div>
         
-        
-
-        {/* File Row */}
-        <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <Folder className="h-3 w-3" /> Files
-            </span>
-            <p className="text-xs font-medium pt-1">
-                {curr_file_count_str}
-            </p>
-        </div>
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <Folder className="h-3 w-3" /> Prev Files
-            </span>
-            <p className="text-xs font-medium pt-1">
-                {prev_file_count_str}
-            </p>
-        </div>
-        <div className="p-3 rounded-lg bg-muted/40 space-y-1">
-            <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                <Folder className="h-3 w-3" /> Files Change
-            </span>
-            <p className="text-sm font-medium pt-1">
-                {(currentNode.diff && currentNode.directory) ? (curr_file_count - prev_file_count) : ("-")}
-            </p>
-        </div>
-      </div>
-
-
-      <div className="flex items-center gap-2 w-full">
-      <div className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
-        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-gray-300">{currentNode.created?.toLocaleDateString() || "N/A"}</span>
-        <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Created</span>
-      </div>
-
-      <div className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
-        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-gray-300">{currentNode.modified?.toLocaleDateString() || "N/A"}</span>
-        <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Modified</span>
-      </div>
-     </div>
-
-      {/* { currentNode.diff && (
-        <div className="space-y-2">
-        <div className="grid grid-cols-2 gap-2">
-        <Card className="p-2 bg-red-500/5 shadow-none">
-            <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium text-red-600/80 uppercase">
-                    Size Change
+        {/* Size row */}
+        <div className="grid grid-cols-3 gap-2">
+            <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <HardDrive className="h-3 w-3" /> Size
                 </span>
-                <TrendingUp className="h-4 w-4 text-red-600" />
+                <p className="text-xs font-bold tracking-tight text-foreground">
+                    {
+                    current_size_str
+                    }
+                </p>
             </div>
-            <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-red-600">
-                    +{1738}
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <HardDrive className="h-3 w-3" /> Previous Size
                 </span>
+                <p className="text-xs font-bold tracking-tight text-foreground">
+                    {
+                    prev_size_str
+                    }
+                </p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-                Previous: {prev_size}
-            </p>
-        </Card>
-                <Card className="p-2 bg-green-500/5 shadow-none">
-            <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium text-green-600/80 uppercase">
-                    Number File Change
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <HardDrive className="h-3 w-3" /> Size Change
                 </span>
-                <TrendingDown className="h-4 w-4 text-green-600" />
+                <p className="text-xs font-bold tracking-tight text-foreground">
+                    {
+                    currentNode.diff? (current_size - prev_size) : ("-")
+                    }
+                </p>
             </div>
-            <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-green-600">
-                    +{1738}
+
+            {/* Subdir row */}
+            <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <FolderTree className="h-3 w-3" /> Subdirs
                 </span>
+                <p className="text-xs font-medium pt-1">
+                    {curr_folder_count_str}
+                </p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-                Previous: {prev_file_count}
-            </p>
-        </Card>
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <FolderTree className="h-3 w-3" /> Prev Subdirs
+                </span>
+                <p className="text-xs font-medium pt-1">
+                    {prev_folder_count_str}
+                </p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <FolderTree className="h-3 w-3" /> Subdir Change
+                </span>
+                <p className="text-sm font-medium pt-1">
+                    {(currentNode.diff && currentNode.directory) ? (curr_folder_count - prev_folder_count) : ("-")}
+                </p>
+            </div>
+            
+            
+
+            {/* File Row */}
+            <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <Folder className="h-3 w-3" /> Files
+                </span>
+                <p className="text-xs font-medium pt-1">
+                    {curr_file_count_str}
+                </p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <Folder className="h-3 w-3" /> Prev Files
+                </span>
+                <p className="text-xs font-medium pt-1">
+                    {prev_file_count_str}
+                </p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/40 space-y-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
+                    <Folder className="h-3 w-3" /> Files Change
+                </span>
+                <p className="text-sm font-medium pt-1">
+                    {(currentNode.diff && currentNode.directory) ? (curr_file_count - prev_file_count) : ("-")}
+                </p>
+            </div>
         </div>
-      </div>
-      )} */}
+
+
+        <div className="flex items-center gap-2 w-full">
+        <div className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="font-medium text-gray-300">{currentNode.created?.toLocaleDateString() || "N/A"}</span>
+            <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Created</span>
+        </div>
+
+        <div className="flex flex-1 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="font-medium text-gray-300">{currentNode.modified?.toLocaleDateString() || "N/A"}</span>
+            <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Modified</span>
+        </div>
+        </div>
 
         <div className="flex flex-col mt-auto">
-        <code className="block text-[10px] text-muted-foreground bg-muted/50 p-1 rounded border break-all font-mono leading-relaxed">
-            {currentNode.path}
-        </code>
-      </div>
+            <div className="relative">
+                <code className="block text-[12px] text-muted-foreground bg-muted/50 p-2 pr-10 rounded border break-all font-mono leading-relaxed">
+                    {currentNode.path}
+                </code>
 
+                    <Button className="absolute bottom-1 right-1 h-3 px-2 text-[10px] " variant="destructive" onClick={
+                        () => {test_reveal_opener(currentNode.path)}
+                    }>Reveal</Button>
+                    <Button className="absolute bottom-1 right-13 h-3 px-2 text-[10px] " variant="outline" onClick={
+                        () => {navigator.clipboard.writeText(currentNode.path)}
+                    }>Copy</Button>
+            </div>
+        </div>
     </div>
   );
 }
