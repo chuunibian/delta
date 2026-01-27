@@ -13,6 +13,7 @@ interface DirViewMetaDiff {
 
 interface FileViewMetaDiff {
     new_file_flag: boolean,
+    deleted_file_flag: boolean,
     previous_size: number,
 }
 

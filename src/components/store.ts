@@ -70,6 +70,8 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
             { pathList, snapshotFlag, prevSnapshotFilePath }
         );
 
+        console.log(result)
+
         userStore.setState((state) => {
             
             const subdirs = result.subdirviews.map((subdir) => ({ // It seems these are the actual nodes that the tree uses for each node!
@@ -78,9 +80,10 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                 size: subdir.meta.size,
                 numsubdir: subdir.meta.num_subdir,
                 numsubfiles: subdir.meta.num_files,
-                // Sql db based stuff, also it seems this is where the info is extracted
+
                 diff: subdir.meta.diff ? {
                   new_flag: subdir.meta.diff.new_dir_flag,
+                  deleted_flag: subdir.meta.diff.deleted_dir_flag,
                   prevnumsubdir: subdir.meta.diff.prev_num_subdir,
                   prevnumfiles: subdir.meta.diff.prev_num_files,
                   prevsize: subdir.meta.diff.previous_size,
@@ -95,16 +98,16 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                 directory: true,
             }));
 
-            // TODO May need to use directory flag to make coniditonal rendering for the overview!!
             const files = result.files.map((file) => ({
                 id: file.id, 
                 name: file.name,
                 size: file.meta.size,
                 path: appendPaths(currentNode.path, file.name),
-                // sql db stuff
+
                 diff: file.meta.diff ? {
                   new_flag: file.meta.diff.new_file_flag,
                   prevsize: file.meta.diff.previous_size,
+                  deleted_flag: file.meta.diff.deleted_file_flag,
                   // I think since this is file it needs to have uninited diff fields to something that is deafult
                   // OR leave it out and just use teh directory flag to conditional it
                 } : undefined,
@@ -163,6 +166,7 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
               // sql stuff
               diff: initial.meta.diff ? {
                 new_flag: initial.meta.diff.new_dir_flag,
+                deleted_flag: initial.meta.diff.deleted_dir_flag,
                 prevnumsubdir: initial.meta.diff.prev_num_subdir,
                 prevnumfiles: initial.meta.diff.prev_num_files,
                 prevsize: initial.meta.diff.previous_size,

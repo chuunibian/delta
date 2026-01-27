@@ -332,7 +332,7 @@ impl Dir {
                     });
 
                     let temp_deleted_dir_view = DirView {
-                        name: "deleted folder".to_string(), // ATP the db does not store name for space saving
+                        name: "[deleted folder]".to_string(), // ATP the db does not store name for space saving
                         id: dir_entry.1.id.to_string(),
                         meta: DirViewMeta {
                             size: dir_entry.1.size as u64, // storing size in the meta, diff will have deleted flag for FE processing
@@ -354,7 +354,7 @@ impl Dir {
                     });
 
                     let temp_deleted_file_view = FileView {
-                        name: "deleted file".to_string(),
+                        name: "[deleted file]".to_string(),
                         id: dir_entry.1.id.to_string(),
                         meta: FileViewMeta {
                             size: dir_entry.1.size as u64,
