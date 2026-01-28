@@ -50,7 +50,7 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
   let current_size = node.data.diff?.deleted_flag ? ("0 B") : (formatBytes(node.data.size));
 
   // Handle prev entry size
-  let previous_size = "";
+  let previous_size = "-";
   if (node.data.diff) {
     if (node.data.diff.deleted_flag) { // if deleted then do workaround curr -> prev
       previous_size = formatBytes(node.data.size);

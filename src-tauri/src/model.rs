@@ -198,30 +198,35 @@ impl Dir {
     }
 
     pub fn get_subdir_and_files_no_diff(&self) -> DirViewChildren {
+        let mut file_view_vec: Vec<FileView> = self
+            .files
+            .values()
+            .map(|file| FileView {
+                name: file.name.clone(),
+                id: file.id.to_string(),
+
+                meta: FileViewMeta {
+                    size: file.meta.size,
+                    created: file.meta.created,
+                    modified: file.meta.modified,
+                    diff: None,
+                },
+            })
+            .collect();
+
+        let mut dir_view_vec: Vec<DirView> = self
+            .subdirs
+            .values() // .values() gets an iterator of &Dir
+            .map(|d| d.to_dir_view_unexpanded_no_diff())
+            .collect();
+
+        file_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
+        dir_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
+
         DirViewChildren {
-            // files: self.files.values().cloned().collect(),
-            // need to map File to FileView
-            files: self
-                .files
-                .values()
-                .map(|file| FileView {
-                    name: file.name.clone(),
-                    id: file.id.to_string(),
+            files: file_view_vec,
 
-                    meta: FileViewMeta {
-                        size: file.meta.size,
-                        created: file.meta.created,
-                        modified: file.meta.modified,
-                        diff: None,
-                    },
-                })
-                .collect(),
-
-            subdirviews: self
-                .subdirs
-                .values() // .values() gets an iterator of &Dir
-                .map(|d| d.to_dir_view_unexpanded_no_diff())
-                .collect(),
+            subdirviews: dir_view_vec,
         }
     }
 
@@ -239,24 +244,6 @@ impl Dir {
         let mut dir_view_vec: Vec<DirView> = Vec::new();
 
         for file in self.files.values() {
-            // let diff_data = match temp_ht.get(&file.id) {
-            //     Some(prev_data) => {
-            //         let diff = Some(FileViewMetaDiff {
-            //             new_file_flag: false,
-            //             deleted_file_flag: false,
-            //             previous_size: prev_data.size as u64,
-            //         });
-            //         temp_ht.remove(&file.id);
-            //         diff
-            //     }
-            //     None => Some(FileViewMetaDiff {
-            //         // default val
-            //         new_file_flag: true,
-            //         deleted_file_flag: false,
-            //         previous_size: 0,
-            //     }),
-            // };
-
             let diff_data = match temp_ht.remove(&file.id) {
                 Some(prev_data) => Some(FileViewMetaDiff {
                     new_file_flag: false,
