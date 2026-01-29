@@ -7,11 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { InitDisk } from "@/types";
 
-interface InitDisk {
-  name: string;
-  desc: string;
-}
 
 interface DiskPathProp {
   disks: InitDisk[];

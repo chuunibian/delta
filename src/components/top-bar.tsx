@@ -49,7 +49,7 @@ const TopBar = () => {
             </MenubarMenu>
         </Menubar>
 
-        <InfoFlagBar></InfoFlagBar>
+        {/* <InfoFlagBar></InfoFlagBar> */}
 
         {/* Temporary hover over path thingy*/}
             <div>
@@ -79,7 +79,7 @@ const TopBar = () => {
 
         </div>
 
-        <SheetDemo></SheetDemo>
+        {/* <SheetDemo></SheetDemo> */}
 
         {/* Top bar should also have a basic text box denoting path of selected item */}
         {/* Should also have a permanent small text place or a popup that shows what scanned and other small info (like total size) */}

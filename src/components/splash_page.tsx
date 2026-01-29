@@ -30,47 +30,7 @@ import { RowSelectionState } from '@tanstack/react-table'
 import Progress from './progress'
 
 import DeltaLogo from '../../src-tauri/icons/64x64.png'
-
-interface InitDisk {
-  name: string;
-  desc: string;
-}
-
-interface DirViewMeta {
-  size: number;
-  num_files: number;
-  num_subdir: number;
-
-  new_dir_flag: boolean;
-  previous_size: number;
-  prev_num_files: number;
-  prev_num_subdir: number;
-
-  created: Date;
-  modified: Date;
-}
-
-interface File {
-  meta: FileViewMeta;
-  name: string;
-  id: string;
-}
-
-export interface FileViewMeta {
-  size: number;
-
-  new_file_flag: boolean;
-  previous_size: number;
-
-  created: Date;
-  modified: Date;
-}
-
-interface DirView {
-  meta: DirViewMeta;
-  name: string;
-  id: string;
-}
+import { DirView, InitDisk } from '@/types'
 
 interface SplashPageProps {
   setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
