@@ -2,6 +2,7 @@ use std::{collections::HashMap, hash::Hash, process::Termination};
 
 use rusqlite::{params, Connection, Transaction};
 
+use crate::error::AppError;
 use crate::model::{self, BackendState, Node, Snapshot_db_meta};
 
 use chrono::Local;
@@ -22,7 +23,7 @@ pub fn query_stats_from_id(
     dir: &model::Dir,
     state: tauri::State<BackendState>,
     prev_snapshot_file_path: String,
-) -> Result<SnapshotRecord, rusqlite::Error> {
+) -> Result<SnapshotRecord, AppError> {
     let prev_data_db_path: std::path::PathBuf = state
         .local_appdata_path
         .as_ref()
@@ -68,7 +69,7 @@ pub fn query_children_stats_from_parent_id(
     parent_dir: &model::Dir,
     state: tauri::State<BackendState>,
     prev_snapshot_file_path: String,
-) -> Result<HashMap<u64, SnapshotRecord>, rusqlite::Error> {
+) -> Result<HashMap<u64, SnapshotRecord>, AppError> {
     let prev_data_db_path: std::path::PathBuf = state
         .local_appdata_path
         .as_ref()
@@ -105,7 +106,7 @@ pub fn query_children_stats_from_parent_id(
 pub async fn write_current_tree(
     state: tauri::State<'_, BackendState>,
     selected_disk_letter: String,
-) -> Result<(), String> {
+) -> Result<(), AppError> {
     let guard = state.file_tree.lock().unwrap();
     if guard.is_none() {
         return Ok(());
@@ -127,15 +128,14 @@ pub async fn write_current_tree(
             root_size_bytes.to_string()
         )); // maybe format isnt the most defensive here?
 
-    let mut conn = Connection::open(&temp_data_db_path).map_err(|e| e.to_string())?;
+    let mut conn = Connection::open(&temp_data_db_path)?;
 
     // ?? Set Pragmas for speed (since this is temp data)
     conn.execute_batch(
         "PRAGMA journal_mode = WAL;
          PRAGMA synchronous = NORMAL;  
          PRAGMA cache_size = 10000;",
-    )
-    .map_err(|e| e.to_string())?;
+    )?;
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS snapshot (
@@ -147,16 +147,15 @@ pub async fn write_current_tree(
             parent_id INTEGER
         )",
         [],
-    )
-    .map_err(|e| e.to_string())?;
+    )?;
 
-    let temp_transaction = conn.transaction().map_err(|e| e.to_string())?;
+    let temp_transaction = conn.transaction()?;
 
     {
         let mut stmt = temp_transaction.prepare(
             "INSERT INTO snapshot (id, size, dir_flag, sub_folder_count, sub_file_count, parent_id)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6)"
-        ).map_err(|e| e.to_string())?;
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+        )?;
 
         let mut stack = Vec::new();
         stack.push((Node::Dir(root_ref), 0));
@@ -199,12 +198,11 @@ pub async fn write_current_tree(
                 sub_folder_count,
                 sub_file_count,
                 real_parent_id
-            ])
-            .map_err(|e| e.to_string())?;
+            ])?;
         }
     }
 
-    temp_transaction.commit().map_err(|e| e.to_string())?;
+    temp_transaction.commit()?;
 
     Ok(())
 }
@@ -212,7 +210,7 @@ pub async fn write_current_tree(
 #[tauri::command]
 pub fn get_local_snapshot_files(
     state: tauri::State<'_, BackendState>,
-) -> Result<Vec<Snapshot_db_meta>, String> {
+) -> Result<Vec<Snapshot_db_meta>, AppError> {
     let temp_data_db_path = state
         .local_appdata_path
         .as_ref()
@@ -221,8 +219,8 @@ pub fn get_local_snapshot_files(
 
     let mut vec_file_names = Vec::new();
 
-    for entry in fs::read_dir(&temp_data_db_path).map_err(|e| e.to_string())? {
-        let entry = entry.map_err(|e| e.to_string())?; // entry is a Result
+    for entry in fs::read_dir(&temp_data_db_path)? {
+        let entry = entry?; // entry is a Result
         let path = entry.path();
 
         if path.is_file() {
@@ -237,7 +235,7 @@ pub fn get_local_snapshot_files(
 }
 
 // For this func it should given a path name return the snapshot db file object
-fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, String> {
+fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, AppError> {
     let path_segmented: Vec<&str> = path.split("_").collect();
 
     // naivedatetime parse from str should turn somethin like 20261220HHMM to a string

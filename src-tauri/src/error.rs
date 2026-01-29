@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -24,14 +25,51 @@ pub enum AppError {
 }
 
 // Obj for error sent to frontend
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BackendError {
-    pub generic_error_string_desc: String,
+    pub user_error_string_desc: String,
     pub library_generated_error_desc: String,
     pub err_code: u32,
 }
 
-// the actual error is still accessible when thrown by framweorks the #error is just a friendly debug/print the error for the backend
-// the {0} is actually the first (and only) item in the enum (actslike tuple) which is hte error
+impl Serialize for AppError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        let resp = match self {
+            AppError::GeneralLogicalErr(str) => BackendError {
+                user_error_string_desc: str.to_string(),
+                library_generated_error_desc: "N/A".to_string(),
+                err_code: 1,
+            },
+            AppError::RustqliteError(e) => BackendError {
+                user_error_string_desc: "N/A".to_string(),
+                library_generated_error_desc: e.to_string(),
+                err_code: 2,
+            },
+            AppError::FileSystemError(e) => BackendError {
+                user_error_string_desc: "N/A".to_string(),
+                library_generated_error_desc: e.to_string(),
+                err_code: 3,
+            },
+            AppError::StartupError(str) => BackendError {
+                user_error_string_desc: str.to_string(),
+                library_generated_error_desc: "N/A".to_string(),
+                err_code: 4,
+            },
+            AppError::CustomError(str) => BackendError {
+                user_error_string_desc: str.to_string(),
+                library_generated_error_desc: "N/A".to_string(),
+                err_code: 5,
+            },
+            AppError::DatabaseGeneralErr(str) => BackendError {
+                user_error_string_desc: str.to_string(),
+                library_generated_error_desc: "N/A".to_string(),
+                err_code: 6,
+            },
+        };
 
-// need manual serde impl for AppError enum for sending frontend the error
-// impl serde::Serialize for AppError
+        return resp.serialize(serializer);
+    }
+}
