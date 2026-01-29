@@ -46,11 +46,40 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
   // padding that react arborist injects is stripped but the rest of the stuff is not, padding self handle
   const { paddingLeft, ...restStyle } = style;
 
+  // Handle current entry size
+  let current_size = node.data.diff?.deleted_flag ? ("0 B") : (formatBytes(node.data.size));
+
+  // Handle prev entry size
+  let previous_size = "-";
+  if (node.data.diff) {
+    if (node.data.diff.deleted_flag) { // if deleted then do workaround curr -> prev
+      previous_size = formatBytes(node.data.size);
+    } else {
+      previous_size = formatBytes(node.data.diff.prevsize);
+    }
+  }
+
+  // file name color
+  let file_name_text_color = node.data.diff?.deleted_flag ? "text-red-500" : "text-grey-200";
+
+  let row_bg_color = node.data.diff?.deleted_flag ? "bg-red-950/30" : "bg-transparent";
+  
+  // Handle new, deleted, gray
+  let status_field_color = "bg-transparent";
+  if (node.data.diff) {
+    if (node.data.diff.new_flag) {
+      status_field_color = "bg-green-500";
+    } else if (node.data.diff.deleted_flag) {
+      status_field_color = "bg-red-500";
+    }
+  }
+
   // Handle for the change field
   let change_field_color = "text-gray-500";
   let change_field_value = "-";
   if (node.data.diff) {
-    let diff = node.data.size - node.data.diff.prevsize;
+    // Check if file is deleted if so workaround, else do the normal change calc (curr - prev)
+    let diff = node.data.diff.deleted_flag ? node.data.diff.prevsize - node.data.size : node.data.size - node.data.diff.prevsize; 
     if (diff < 0) {
       change_field_color = "text-green-400"
     } else if (diff > 0) { // current > prev
@@ -106,8 +135,7 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
         {/* node.data.children?.length > 0  */}
       </div>
 
-      <div className="flex flex-1 items-center border-b border-gray-600/50 min-w-0">
-        
+      <div className={`flex flex-1 items-center border-b border-gray-600/50 min-w-0 ${row_bg_color}`}>
         <div className="flex-1 flex items-center min-w-0 pr-4">
           <div className="mr-2 flex-shrink-0 text-gray-400">
              {node.isLeaf ? (
@@ -116,17 +144,17 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
                node.isOpen ? <FolderOpen className="h-4 w-4 text-amber-400" /> : <Folder className="h-4 w-4 text-amber-400" />
              )}
           </div>
-          <span className="truncate text-xs font-mono text-gray-200">
+          <span className={`truncate text-xs font-mono ${file_name_text_color}`}>
             {node.data.name}
           </span>
         </div>
 
         <div className={`${COL_WIDTHS.size} flex-shrink-0 text-right px-2 text-xs font-mono tabular-nums text-gray-100`}>
-          {formatBytes(node.data.size)}
+          {current_size}
         </div>
 
         <div className={`${COL_WIDTHS.prev} flex-shrink-0 text-right px-2 text-xs font-mono tabular-nums text-gray-500`}>
-          {node.data.diff ? formatBytes(node.data.diff.prevsize) : ""}
+          {previous_size}
         </div>
 
         <div className={`${COL_WIDTHS.change} flex-shrink-0 text-right px-2 text-xs font-mono tabular-nums ${change_field_color}`}>
@@ -136,15 +164,17 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
         <div className={`${COL_WIDTHS.diff} flex-shrink-0 flex justify-center items-center px-2 gap-2`}>
           <Progress value={ratioValue} className="h-2 flex-1 bg-muted [&>div]:bg-yellow-200"></Progress>
 
-          {node.data.diff?.new_flag ? (
-            <div className="h-2 w-2 shrink-0 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.6)]" title="New File" />
+          {/* {node.data.diff?.new_flag ? (
+            <div className="h-2 w-2 shrink-0 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.6)]"/>
            ) :
            (
             <div 
-              className="h-2 w-2 shrink-0 rounded-full border border-gray-500 bg-transparent" 
-              title="None" 
+              className="h-2 w-2 shrink-0 rounded-full border border-gray-500 bg-transparent"  
             />
-           )}
+           )} */}
+
+           <div className={`h-2 w-2 shrink-0 rounded-full border-gray-500 ${status_field_color}`} />
+
         </div>
 
       </div>

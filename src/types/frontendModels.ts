@@ -13,6 +13,8 @@ export interface TreeDataNode {
     created?: Date;
     modified?: Date;
     diff?: { // represents prev snapshot data it is ? checking if it is undef acts as a cond rend flag
+      new_flag?: boolean;
+      deleted_flag?: boolean;
       prevnumsubdir?: number;
       prevnumfiles?: number;
       prevsize?: number;

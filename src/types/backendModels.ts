@@ -5,6 +5,7 @@ export interface InitDisk {
 
 interface DirViewMetaDiff {
     new_dir_flag: boolean,
+    deleted_dir_flag: boolean,
     previous_size: number,
     prev_num_files: number,
     prev_num_subdir: number,
@@ -12,6 +13,7 @@ interface DirViewMetaDiff {
 
 interface FileViewMetaDiff {
     new_file_flag: boolean,
+    deleted_file_flag: boolean,
     previous_size: number,
 }
 

@@ -15,6 +15,7 @@ import { filesize } from "filesize";
 import { Button } from "./ui/button";
 
 import { openPath, openUrl, revealItemInDir } from '@tauri-apps/plugin-opener';
+import { formatBytes } from "@/lib/utils";
 
 export default function Overview() {
 
@@ -96,7 +97,7 @@ export default function Overview() {
                 </span>
                 <p className="text-xs font-bold tracking-tight text-foreground">
                     {
-                    currentNode.diff? (current_size - prev_size) : ("-")
+                    currentNode.diff? (formatBytes(current_size - prev_size)) : ("-")
                     }
                 </p>
             </div>

@@ -109,6 +109,7 @@ pub struct DirViewMeta {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DirViewMetaDiff {
     pub new_dir_flag: bool,
+    pub deleted_dir_flag: bool,
     pub previous_size: u64,
     pub prev_num_files: u64,
     pub prev_num_subdir: u64,
@@ -124,6 +125,7 @@ pub struct FileMeta {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FileViewMetaDiff {
     pub new_file_flag: bool,
+    pub deleted_file_flag: bool,
     pub previous_size: u64,
 }
 
@@ -179,8 +181,10 @@ impl Dir {
                 created: self.meta.created.clone(),
                 modified: self.meta.modified.clone(),
 
+                // This is a bug pretty sure, need to check if temp_stat is empty
                 diff: Some(DirViewMetaDiff {
                     new_dir_flag: false,
+                    deleted_dir_flag: false,
                     previous_size: temp_stat.size as u64,
                     prev_num_files: temp_stat.sub_file_count as u64,
                     prev_num_subdir: temp_stat.sub_folder_count as u64,
@@ -194,30 +198,35 @@ impl Dir {
     }
 
     pub fn get_subdir_and_files_no_diff(&self) -> DirViewChildren {
+        let mut file_view_vec: Vec<FileView> = self
+            .files
+            .values()
+            .map(|file| FileView {
+                name: file.name.clone(),
+                id: file.id.to_string(),
+
+                meta: FileViewMeta {
+                    size: file.meta.size,
+                    created: file.meta.created,
+                    modified: file.meta.modified,
+                    diff: None,
+                },
+            })
+            .collect();
+
+        let mut dir_view_vec: Vec<DirView> = self
+            .subdirs
+            .values() // .values() gets an iterator of &Dir
+            .map(|d| d.to_dir_view_unexpanded_no_diff())
+            .collect();
+
+        file_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
+        dir_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
+
         DirViewChildren {
-            // files: self.files.values().cloned().collect(),
-            // need to map File to FileView
-            files: self
-                .files
-                .values()
-                .map(|file| FileView {
-                    name: file.name.clone(),
-                    id: file.id.to_string(),
+            files: file_view_vec,
 
-                    meta: FileViewMeta {
-                        size: file.meta.size,
-                        created: file.meta.created,
-                        modified: file.meta.modified,
-                        diff: None,
-                    },
-                })
-                .collect(),
-
-            subdirviews: self
-                .subdirs
-                .values() // .values() gets an iterator of &Dir
-                .map(|d| d.to_dir_view_unexpanded_no_diff())
-                .collect(),
+            subdirviews: dir_view_vec,
         }
     }
 
@@ -227,7 +236,7 @@ impl Dir {
         state: tauri::State<BackendState>,
         prev_snapshot_file_path: String,
     ) -> DirViewChildren {
-        let temp_ht =
+        let mut temp_ht =
             database::query_children_stats_from_parent_id(&self, state, prev_snapshot_file_path)
                 .unwrap();
 
@@ -235,13 +244,16 @@ impl Dir {
         let mut dir_view_vec: Vec<DirView> = Vec::new();
 
         for file in self.files.values() {
-            let diff_data = match temp_ht.get(&file.id) {
+            let diff_data = match temp_ht.remove(&file.id) {
                 Some(prev_data) => Some(FileViewMetaDiff {
                     new_file_flag: false,
+                    deleted_file_flag: false,
                     previous_size: prev_data.size as u64,
                 }),
                 None => Some(FileViewMetaDiff {
+                    // default val
                     new_file_flag: true,
+                    deleted_file_flag: false,
                     previous_size: 0,
                 }),
             };
@@ -261,15 +273,17 @@ impl Dir {
         }
 
         for subdir in self.subdirs.values() {
-            let diff_data = match temp_ht.get(&subdir.id) {
+            let diff_data = match temp_ht.remove(&subdir.id) {
                 Some(prev_data) => Some(DirViewMetaDiff {
                     new_dir_flag: false,
+                    deleted_dir_flag: false,
                     previous_size: prev_data.size as u64,
                     prev_num_files: prev_data.sub_file_count as u64,
                     prev_num_subdir: prev_data.sub_folder_count as u64,
                 }),
                 None => Some(DirViewMetaDiff {
                     new_dir_flag: true,
+                    deleted_dir_flag: false,
                     previous_size: 0,
                     prev_num_files: 0,
                     prev_num_subdir: 0,
@@ -290,6 +304,56 @@ impl Dir {
             };
 
             dir_view_vec.push(temp_dir_view);
+        }
+
+        // Process remaining items in ht | all remaining are files deleted from current when compared to
+        for dir_entry in temp_ht {
+            match dir_entry.1.dir_flag {
+                true => {
+                    let temp_diff = Some(DirViewMetaDiff {
+                        new_dir_flag: false,
+                        deleted_dir_flag: true, // set true
+                        previous_size: 0,
+                        prev_num_files: 0,
+                        prev_num_subdir: 0,
+                    });
+
+                    let temp_deleted_dir_view = DirView {
+                        name: "[deleted folder]".to_string(), // ATP the db does not store name for space saving
+                        id: dir_entry.1.id.to_string(),
+                        meta: DirViewMeta {
+                            size: dir_entry.1.size as u64, // storing size in the meta, diff will have deleted flag for FE processing
+                            num_files: dir_entry.1.sub_file_count as u64,
+                            num_subdir: dir_entry.1.sub_file_count as u64,
+                            created: SystemTime::UNIX_EPOCH,
+                            modified: SystemTime::UNIX_EPOCH,
+                            diff: temp_diff,
+                        },
+                    };
+
+                    dir_view_vec.push(temp_deleted_dir_view);
+                }
+                false => {
+                    let temp_diff = Some(FileViewMetaDiff {
+                        new_file_flag: false,
+                        deleted_file_flag: true, // set true
+                        previous_size: 0,
+                    });
+
+                    let temp_deleted_file_view = FileView {
+                        name: "[deleted file]".to_string(),
+                        id: dir_entry.1.id.to_string(),
+                        meta: FileViewMeta {
+                            size: dir_entry.1.size as u64,
+                            created: SystemTime::UNIX_EPOCH,
+                            modified: SystemTime::UNIX_EPOCH,
+                            diff: temp_diff,
+                        },
+                    };
+
+                    file_view_vec.push(temp_deleted_file_view);
+                }
+            }
         }
 
         // sort descending
