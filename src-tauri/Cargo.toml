@@ -29,5 +29,6 @@ twox-hash = "2.1.2"
 rusqlite = { version = "0.37.0", features = ["bundled"] }
 chrono = "0.4.43"
 thiserror = "2.0.18"
+tauri-plugin-dialog = "2"
 
 

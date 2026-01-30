@@ -140,6 +140,8 @@ pub struct FileViewMeta {
     pub modified: SystemTime,
 }
 
+pub struct AppHealth {}
+
 impl Init_Disk {
     pub fn new(name: String, desc: String) -> Self {
         Self { name, desc }
