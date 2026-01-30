@@ -31,6 +31,7 @@ import Progress from './progress'
 
 import DeltaLogo from '../../src-tauri/icons/64x64.png'
 import { DirView, InitDisk } from '@/types'
+import TopBar from './top-bar'
 
 interface SplashPageProps {
   setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
@@ -119,68 +120,73 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
   
   return (
     // <div className="flex min-h-screen items-center justify-center bg-stone-800 p-10 gap-6">
-    <div className="flex min-h-screen flex-wrap items-center justify-center bg-stone-800 p-10 gap-6">
+    // <div className="flex min-h-screen flex-wrap items-center justify-center bg-stone-800 p-10 gap-6">
+    <div className="flex flex-col h-screen bg-stone-800">
+      <TopBar></TopBar>
+
+      <div className="flex flex-1 flex-wrap items-center justify-center gap-6 p-6 overflow-auto">
+
+        {/* Temp image */}
+        <img src={DeltaLogo} alt="This the App Logo" className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9'/>
+
+        {/* <TopBar></TopBar> */}
+        {/* Test data table for snapshots, datatable should be generic */}
+        <Card className='p-3 min-w-[350px]'>
+          <DataTable columns={columns} data={snapshotFiles} rowSelection={rowSelection} setRowSelection={setRowSelection} ></DataTable>
+          {/* <p>{snapshotFile}</p> */}
+        </Card>
       
-      {/* Temp image */}
-      <img src={DeltaLogo} alt="This the App Logo" className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9'/>
 
-      {/* Test data table for snapshots, datatable should be generic */}
-      <Card className='p-3 min-w-[350px]'>
-        <DataTable columns={columns} data={snapshotFiles} rowSelection={rowSelection} setRowSelection={setRowSelection} ></DataTable>
-        {/* <p>{snapshotFile}</p> */}
+        {/* disk scan card */}
+        <Card className='w-[28rem] p-7'>
+        <CardHeader>
+          <CardTitle>Start Snapshot</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col space-y-5">
+            <p className="text-sm leading-none font-medium">"Disk"</p>
+            <DiskPath disks={disks} onValueChange={setSelectedDisk}></DiskPath>
+            <Separator></Separator>
+            <p className="text-sm leading-none font-medium">"Custom Path"</p>
+            <CustomPath></CustomPath>
+            <Separator></Separator>
+            {/* Dry run checkbox */}
+            <div className="flex items-start gap-3">
+              <Checkbox id="terms-2" disabled={snapshotFile===""} checked={snapshotFlag} onCheckedChange={setSnapshotFlag}/>
+              <div className="grid gap-2">
+                <Label htmlFor="terms-2">Compare Snapshots</Label>
+                <p className="text-muted-foreground text-sm">
+                  Compare current scan with previous scanned snapshot
+                </p>
+              </div>
+            </div>
+
+            <Separator></Separator>
+
+            <div className="flex items-start gap-3">
+              <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*//> 
+              <div className="grid gap-2">
+                <Label htmlFor="terms-2">Save Snapshot</Label>
+                <p className="text-muted-foreground text-sm">
+                  Save current scan into new snapshot file
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </CardContent>
+        <CardFooter>
+          <div className="w-full flex flex-row items-center justify-center gap-3">
+          <Button variant="outline" onClick={() => runScan(selectedDisk)}>Scan</Button>
+          <Progress></Progress>
+          </div>
+        </CardFooter>
       </Card>
-    
 
-      {/* disk scan card */}
-      <Card className='w-[28rem] p-7'>
-      <CardHeader>
-        <CardTitle>Start Snapshot</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col space-y-5">
-          <p className="text-sm leading-none font-medium">"Disk"</p>
-          <DiskPath disks={disks} onValueChange={setSelectedDisk}></DiskPath>
-          <Separator></Separator>
-          <p className="text-sm leading-none font-medium">"Custom Path"</p>
-          <CustomPath></CustomPath>
-          <Separator></Separator>
-          {/* Dry run checkbox */}
-          <div className="flex items-start gap-3">
-            <Checkbox id="terms-2" disabled={snapshotFile===""} checked={snapshotFlag} onCheckedChange={setSnapshotFlag}/>
-            <div className="grid gap-2">
-              <Label htmlFor="terms-2">Compare Snapshots</Label>
-              <p className="text-muted-foreground text-sm">
-                Compare current scan with previous scanned snapshot
-              </p>
-            </div>
-          </div>
-
-          <Separator></Separator>
-
-          <div className="flex items-start gap-3">
-            <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*//> 
-            <div className="grid gap-2">
-              <Label htmlFor="terms-2">Save Snapshot</Label>
-              <p className="text-muted-foreground text-sm">
-                Save current scan into new snapshot file
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </CardContent>
-      <CardFooter>
-        <div className="w-full flex flex-row items-center justify-center gap-3">
-        <Button variant="outline" onClick={() => runScan(selectedDisk)}>Scan</Button>
-        <Progress></Progress>
-        </div>
-      </CardFooter>
-    </Card>
-
-    {/* Notifications card */}
-        <SplashNotifications></SplashNotifications>
+      {/* Notifications card */}
+      <SplashNotifications></SplashNotifications>
     </div>
-
+  </div>
   )
 }
 
