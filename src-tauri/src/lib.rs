@@ -3,6 +3,9 @@ use humansize::{format_size, DECIMAL}; // link per file (pre compiled)
 use model::BackendState;
 use sysinfo::{Disks, System};
 use tauri::Manager;
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
+
+use crate::error::AppError;
 
 mod database;
 mod disk; // compile my stuff
@@ -21,24 +24,39 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
-            let local_appdata_path = app
-                .path()
-                .app_local_data_dir()
-                .expect("Unable to resolve local appdata app path!");
+            let local_app_data_path = match app.path().app_local_data_dir() {
+                Ok(path) => path,
+                Err(_) => {
+                    app.dialog()
+                    .message(
+                        "An error has occured during app startup: The app cannot get it's local appdata path")
+                    .kind(MessageDialogKind::Error)
+                    .title("Startup Error")
+                    .blocking_show();
 
-            startup::manage_local_appdata_app_folder(&local_appdata_path)
-                .expect("Unable to create local app appdata folder (assuming it not existing)");
-            startup::manage_binary_db_files(&local_appdata_path)
-                .expect("Unable to manage db files in local appdata");
-            startup::appdata_folder_check(&local_appdata_path)
-                .expect("File with improper name was found and removed in local data store.");
+                    return Err(Box::new(AppError::CustomError("Failed app startup".to_string())));
+                }
+            };
+
+            
+            if let Err(e) = startup::startup_checks(&local_app_data_path) {
+                app.dialog()
+                    .message(format!(
+                        "An error has occured during app startup: {}",
+                        e.to_string()
+                    ))
+                    .kind(MessageDialogKind::Error)
+                    .title("Startup Error")
+                    .blocking_show();
+            }
 
             let state = BackendState {
                 file_tree: std::sync::Mutex::new(None),
-                local_appdata_path: app.path().app_local_data_dir().ok(),
+                local_appdata_path: Some(local_app_data_path), 
             };
-            app.manage(state); // set app to manange the state (there is also a manage func but it can't do certain things)
+            app.manage(state);
 
             Ok(())
         })
