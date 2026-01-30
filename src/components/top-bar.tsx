@@ -13,7 +13,9 @@ import { SheetDemo } from './sheet-demo'
 
 const TopBar = () => {
     const currentPath = userStore((state) => state.currentPath)
-    const currentNode = userStore((state) => state.currentEntryData)
+    const currentEntryDetails = userStore((state) => state.currentEntryDetail)
+    let numsubdir = currentEntryDetails.numsubdir ? String(currentEntryDetails.numsubdir) : ("0");
+    let numsubfile = currentEntryDetails.numsubfile ? String(currentEntryDetails.numsubfile) : ("0");
 
   return (
     <div className='flex flex-row items-center justify-between w-full pl-2 pr-2 bg-stone-800'>
@@ -53,6 +55,10 @@ const TopBar = () => {
 
         {/* Temporary hover over path thingy*/}
             <div>
+                <Badge className="h-5 min-w-5 rounded-full px-1 font-mono text-yellow-500 tabular-nums"
+                variant="outline">
+                    {`Subdir: ${numsubdir} Subfiles: ${numsubfile}`}
+                </Badge>
                 <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
                 variant="outline">
                     {currentPath}
@@ -80,10 +86,6 @@ const TopBar = () => {
         </div>
 
         {/* <SheetDemo></SheetDemo> */}
-
-        {/* Top bar should also have a basic text box denoting path of selected item */}
-        {/* Should also have a permanent small text place or a popup that shows what scanned and other small info (like total size) */}
-        {/* You can use the hovercard for it */}
     </div>
   )
 }

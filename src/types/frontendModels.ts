@@ -20,3 +20,8 @@ export interface TreeDataNode {
       prevsize?: number;
     }
 }
+
+export interface CurrentEntryDetails {
+  numsubdir: number,
+  numsubfile: number,
+}

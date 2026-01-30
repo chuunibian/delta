@@ -42,6 +42,7 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
   const addNewDirView = userStore((state) => state.addNewDirView);
   const changeCurrentPath = userStore((state) => state.changeCurrentPath);
   const updateCurrentClickedOverview = userStore((state) => state.changeCurrentOverviewNode);
+  const changeCurrentEntryDetails = userStore((state) => state.changeCurrentEntryDetails);
 
   // padding that react arborist injects is stripped but the rest of the stuff is not, padding self handle
   const { paddingLeft, ...restStyle } = style;
@@ -117,6 +118,8 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
       onMouseEnter={
         () => {
           changeCurrentPath(node.data.path)
+          // New
+          changeCurrentEntryDetails(node.data.numsubdir, node.data.numsubfiles)
         }
       }
     >
