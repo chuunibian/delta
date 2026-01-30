@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
 import { Folder, FolderOpen, Underline, File, Loader2 } from "lucide-react";
-import { DirView, DirViewChildren, TreeDataNode } from "@/types";
+import { CurrentEntryDetails, DirView, DirViewChildren, TreeDataNode } from "@/types";
 import { appendPaths } from "@/lib/utils";
 
 // To get the path we could traverse up the tree or we could store it as a field in the interface
@@ -9,12 +9,14 @@ import { appendPaths } from "@/lib/utils";
 interface FrontEndFileSystemStore {
     root: TreeDataNode;
     currentPath: string; // used for the temporary onhover path thing
+    currentEntryDetail: CurrentEntryDetails; // used for the quick detail at top bar
     currentEntryData: TreeDataNode; // used for the side overview
     snapshotFlag: boolean; // a frontend state flag that represents if requests are for snapshot comparing or not true = compare false = don't compare
     prevSnapshotFilePath: string;
     addNewDirView: (currentTreeData: TreeDataNode, pathList: string[]) => void;
     changeCurrentOverviewNode: (currentTreeNode: TreeDataNode) => void;
     changeCurrentPath: (path: string) => void;
+    changeCurrentEntryDetails: (numsubdir: number, numsubfile: number) => void; // NEW can pass in more info if needed
     initDirData: (inital: DirView) => void;
     setSnapshotFlag: (flag: boolean) => void;
     setSelectedHistorySnapshotFile: (file: string) => void;
@@ -52,6 +54,11 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
     snapshotFlag: false, // Compare with snapshots? default to do not compare snapshots
 
     prevSnapshotFilePath: "", // temp name for when there is nothing set and nothing chosen will be empty str
+
+    currentEntryDetail: {
+      numsubdir: 0,
+      numsubfile: 0,
+    },
 
     // Note that this func uses 2 global state when lazy loading
     // The snapshotFlag bool which is to or not to compare with previous snapshot 
@@ -103,6 +110,7 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
                 name: file.name,
                 size: file.meta.size,
                 path: appendPaths(currentNode.path, file.name),
+                // This creation for file doesnt contain num of subdir or sub file, both wouldbe zero but maybe better to add it here + also have the existing logical checks
 
                 diff: file.meta.diff ? {
                   new_flag: file.meta.diff.new_file_flag,
@@ -140,13 +148,16 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
       }
     },
 
-    changeCurrentPath: (path) => {
-      userStore.setState({currentPath: path})
-    },
+    changeCurrentPath: (path) =>
+      set({ currentPath: path }),
 
-    changeCurrentOverviewNode: (currentTreeNode) => { // Note this creates copies I think I dont know if this will ever be a perfoamcen factor or bad desing that needs a diff approach
-      userStore.setState({currentEntryData: currentTreeNode})
-    },
+    changeCurrentEntryDetails: (numsubdir, numsubfile) =>
+      set({
+        currentEntryDetail: { numsubdir, numsubfile },
+      }),
+
+    changeCurrentOverviewNode: (currentTreeNode) =>
+      set({ currentEntryData: currentTreeNode }),
 
     initDirData: (initial) => {
         // takes in initial dir view which is unexpanded X:\        
