@@ -9,6 +9,7 @@ import { Badge } from './ui/badge'
 import InfoFlagBar from './info_flag_bar'
 import { Sheet } from './ui/sheet'
 import { SheetDemo } from './sheet-demo'
+import { NotificationCenter } from './TempNotificationCenter'
 
 
 const TopBar = () => {
@@ -76,6 +77,7 @@ const TopBar = () => {
             <ArrowRightIcon className="w-2 h-2" />
             </Button>
             </ButtonGroup> */}
+            <NotificationCenter></NotificationCenter>
 
         </div>
 

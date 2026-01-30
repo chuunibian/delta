@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import TestFileTreeSecond from "./tree-view";
 import Overview from "./overview-tab";
 import { ChartAreaInteractive } from "./test-chart";
+import { NotificationCenter } from "./TempNotificationCenter";
 
 const Analytics = () => {
   // For shrinking window size have it at h-screen and overflow hidden since the main container
@@ -36,6 +37,7 @@ const Analytics = () => {
               </Card>
               <Card className="flex-1 min-h-0 p-3 overflow-auto">
                 {/* <ChartAreaInteractive></ChartAreaInteractive> */}
+                <NotificationCenter></NotificationCenter>
               </Card>
             </div>
           </div>
