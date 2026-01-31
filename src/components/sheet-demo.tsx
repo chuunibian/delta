@@ -30,7 +30,7 @@ import {
 import { Trash2 } from "lucide-react"
 import { snapshotStore } from "./store"
 
-export function SheetDemo() {
+export function SettingsPage() {
 
   const snapshotFiles = snapshotStore((state) => state.previousSnapshots)
   const setSnapshotFiles = snapshotStore((state) => state.setPreviousSnapshots)

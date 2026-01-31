@@ -8,7 +8,7 @@ import { userStore } from './store'
 import { Badge } from './ui/badge'
 import InfoFlagBar from './info_flag_bar'
 import { Sheet } from './ui/sheet'
-import { SheetDemo } from './sheet-demo'
+import { SettingsPage } from './sheet-demo'
 
 
 const TopBar = () => {
@@ -72,7 +72,7 @@ const TopBar = () => {
 
             {/* <Spinner /> */}
 
-            <SheetDemo></SheetDemo>
+            <SettingsPage></SettingsPage>
 
             {/* <ButtonGroup>
             <Button variant="outline" size="icon-sm" aria-label="Previous">
@@ -84,8 +84,6 @@ const TopBar = () => {
             </ButtonGroup> */}
 
         </div>
-
-        {/* <SheetDemo></SheetDemo> */}
     </div>
   )
 }
