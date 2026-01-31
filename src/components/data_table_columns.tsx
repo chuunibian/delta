@@ -1,36 +1,10 @@
-// import React from 'react'
-
-// const data_table_columns = () => {
-//   return (
-//     <div>data_table_columns</div>
-//   )
-// }
-
-// export default data_table_columns
-
-"use client"
- 
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "./ui/checkbox"
-
- 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-// export type Payment = {
-//   id: string
-//   amount: number
-//   status: "pending" | "processing" | "success" | "failed"
-//   email: string
-// }
-
-
 /*
   current only have drive letter and date and also a date numerical item
   > Instance of data -> {"driveLetter": letter, "date": date, "date_key": key}
 
 */
-
-
 /*
   tan stack table row selection:
 

@@ -10,6 +10,7 @@ use tauri::{App, AppHandle, Emitter};
 use twox_hash::XxHash64;
 use walkdir::WalkDir;
 
+use crate::error::AppError;
 use crate::model::{self, BackendState, Init_Disk};
 
 fn hash_path_id(path: &str) -> u64 {
@@ -19,12 +20,14 @@ fn hash_path_id(path: &str) -> u64 {
 }
 
 #[tauri::command]
-pub fn retreive_disks() -> Result<Vec<Init_Disk>, String> {
+pub fn retreive_disks() -> Result<Vec<Init_Disk>, AppError> {
     let disks = Disks::new_with_refreshed_list();
     let mut disk_list = Vec::new();
 
     if disks.is_empty() {
-        return Err("No disks found or Error while retrieving disks".to_string());
+        return Err(AppError::GeneralLogicalErr(
+            "No disks found while retrieving disks".to_string(),
+        ));
     }
 
     for disk in &disks {
@@ -58,17 +61,13 @@ pub async fn disk_scan(
     app: AppHandle,
     snapshot_file: String, // String, I think can bind the initial root scan input to this entry func or make a new func (decouple) for that
     snapshot_flag: bool,   // temp? for the inital root (also thsi func) to compare or not compare
-) -> Result<model::DirView, String> {
-    if !check_user_selected_disk(&target) {
-        return Err("User entered target for scan is invalid".into());
-    }
-
+) -> Result<model::DirView, AppError> {
     println!("Starting Scan");
 
     // let root = naive_scan(&target)?; // populate the data structure
     let root = match naive_scan(&target, app) {
         Ok(root) => root,
-        Err(e) => return Err("Error running naive scan".to_string()),
+        Err(e) => return Err(e),
     };
 
     let root_view = match snapshot_flag {
@@ -89,7 +88,7 @@ pub fn query_new_dir_object(
     state: tauri::State<BackendState>,
     snapshot_flag: bool,
     prev_snapshot_file_path: String, // < - frontend manages what snapshto file to compare to and it sends in that path to here to query
-) -> Result<model::DirViewChildren, String> {
+) -> Result<model::DirViewChildren, AppError> {
     // This asks state for file_tree mutex and locks it to become mutexguard holding Option<Dir>
     let file_tree = state.file_tree.lock().unwrap();
 
@@ -100,10 +99,10 @@ pub fn query_new_dir_object(
 
         for part in &path_list {
             current_dir = current_dir.subdirs.get(part).ok_or_else(|| {
-                format!(
+                AppError::GeneralLogicalErr(format!(
                     "Requested query path has word {} which was not found in that directory",
                     part
-                )
+                ))
             })?;
         }
 
@@ -113,16 +112,13 @@ pub fn query_new_dir_object(
             Ok(current_dir.get_subdir_and_files(state.clone(), prev_snapshot_file_path))
         }
     } else {
-        Err("There is no Dir object in the state".into())
+        Err(AppError::GeneralLogicalErr(
+            "There is no root Dir object in backend memory state".to_string(),
+        ))
     }
 }
 
-pub fn check_user_selected_disk(disk: &str) -> bool {
-    /* From the front end the user should have selected a disk */
-    return true;
-}
-
-pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, Box<dyn std::error::Error>> {
+pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> {
     let mut hash_store_dir: HashMap<PathBuf, model::Dir> = HashMap::new();
     let mut hash_store_file: HashMap<PathBuf, model::File> = HashMap::new();
 
@@ -241,7 +237,8 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, Box<dyn st
 
         return Ok(root);
     } else {
-        print!("After scan a single root does not exist");
-        Err("After scan, a single root does not exist".into()) // .into() infer type conv
+        Err(AppError::GeneralLogicalErr(
+            "During scan a single root directory for the disk does not exist".to_string(),
+        ))
     }
 }
