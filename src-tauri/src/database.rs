@@ -224,9 +224,15 @@ pub fn get_local_snapshot_files(
         let path = entry.path();
 
         if path.is_file() {
-            let file_path_name = path.file_stem().unwrap().to_string_lossy().to_string(); // file stem removes the file extension
+            let file_path_name = path
+                .file_stem()
+                .ok_or(AppError::CustomError(
+                    "Path failed to get file stem".to_string(),
+                ))?
+                .to_string_lossy()
+                .to_string(); // file stem removes the file extension
 
-            vec_file_names.push(parse_snapshot_file_name(&file_path_name).unwrap());
+            vec_file_names.push(parse_snapshot_file_name(&file_path_name)?);
             // or do a let Some(name) = instead of the unwrap
         }
     }
@@ -249,4 +255,23 @@ fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, AppError>
     };
 
     return Ok(snapshot_meta);
+}
+
+#[tauri::command]
+pub fn delete_snapshot_file(
+    selected_row_file_name: String,
+    state: tauri::State<'_, BackendState>,
+) -> Result<bool, AppError> {
+    let prev_data_db_path: std::path::PathBuf = state
+        .local_appdata_path
+        .as_ref()
+        .unwrap()
+        .join("tempsnapshot")
+        .join(format!("{}.db", selected_row_file_name));
+
+    fs::remove_file(prev_data_db_path)?;
+
+    // Using fs delete also catch the error for that if needed on the passed in path (such as if X does not exist)
+
+    Ok(true)
 }

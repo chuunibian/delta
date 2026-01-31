@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { Folder, FolderOpen, Underline, File, Loader2 } from "lucide-react";
 import { CurrentEntryDetails, DirView, DirViewChildren, TreeDataNode } from "@/types";
 import { appendPaths } from "@/lib/utils";
+import { SnapshotFile } from "./data_table_columns";
 
 // To get the path we could traverse up the tree or we could store it as a field in the interface
 // the root is the global state, everything else is helper functions
@@ -21,6 +22,19 @@ interface FrontEndFileSystemStore {
     setSnapshotFlag: (flag: boolean) => void;
     setSelectedHistorySnapshotFile: (file: string) => void;
 }
+
+interface FrontEndSnapshotStore {
+  previousSnapshots: SnapshotFile[];
+  setPreviousSnapshots: (snapshotFileList: SnapshotFile[]) => void;
+}
+
+
+export const snapshotStore = create<FrontEndSnapshotStore>((set, get) => ({
+  previousSnapshots: [],
+  setPreviousSnapshots: (snapshotFileList) => {
+    set({previousSnapshots: snapshotFileList})
+  },
+}))
 
 // The set and get are for setting the state and getting the state
 // note this function will make the backend call
