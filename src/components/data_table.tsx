@@ -30,6 +30,7 @@
 
 */
 
+import { ScrollArea } from "./ui/scroll-area"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import { ColumnDef, flexRender, getCoreRowModel, OnChangeFn, RowSelectionState, useReactTable } from "@tanstack/react-table"
 
@@ -57,58 +58,60 @@ export function DataTable<TData, TValue>({columns, data, rowSelection, setRowSel
 
   return (
     <div className="rounded-md border overflow-hidden">
-    <Table>
-      <TableHeader className="bg-stone-950">
-        {
-          table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {
-                headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {
-                        header.isPlaceholder ?
-                          null : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )
-                      }
-                    </TableHead>
-                  )
-                })
-              }
+      <ScrollArea className="h-[450px] w-full rounded-md border">
+        <Table>
+          <TableHeader className="bg-stone-950">
+            {
+              table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {
+                    headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id}>
+                          {
+                            header.isPlaceholder ?
+                              null : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )
+                          }
+                        </TableHead>
+                      )
+                    })
+                  }
 
-            </TableRow>
-          ))
-        }
-      </TableHeader>
-      <TableBody className="bg-stone-950">
-        {
-          table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                className="data-[state=selected]:bg-green-950"
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableRow>
+              ))
+            }
+          </TableHeader>
+          <TableBody className="bg-stone-950">
+            {
+              table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="data-[state=selected]:bg-green-950"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) :
+              (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="text-center">
+                    No snapshot files.
                   </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) :
-          (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center">
-                No snapshot files.
-              </TableCell>
-            </TableRow>
-          )
-        }
-      </TableBody>
-    </Table>
+                </TableRow>
+              )
+            }
+          </TableBody>
+        </Table>
+      </ScrollArea>
     </div>
   )
 
