@@ -35,16 +35,16 @@ export function NotificationCenter() {
   const [lastSeenCount, setLastSeenCount] = useState(backendErrorList.length)
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen) { // if error list updates and comp is not open then update unread count
       const diff = backendErrorList.length - lastSeenCount
       setUnreadCount(diff > 0 ? diff : 0)
     } else {
-      setLastSeenCount(backendErrorList.length)
+      setLastSeenCount(backendErrorList.length) // if not open then set prev viewed length into its state
       setUnreadCount(0)
     }
   }, [backendErrorList.length, isOpen, lastSeenCount])
 
-  const handleNotificationOpen = (open: boolean) => {
+  const handleNotificationOpen = (open: boolean) => { // onOpenChange boolean auto input byy the shadecn component
     setIsOpen(open)
     if (open) {
       setUnreadCount(0)
