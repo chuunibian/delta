@@ -21,6 +21,12 @@ export interface TreeDataNode {
     }
 }
 
+export interface BackendError {
+  user_error_string_desc: String,
+  library_generated_error_desc: String, 
+  err_code: number,
+}
+
 export interface CurrentEntryDetails {
   numsubdir: number,
   numsubfile: number,

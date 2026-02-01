@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import DiskPath from './disk_path'
 import { Separator } from '@/components/ui/separator'
 import CustomPath from './custom_path'
 import { Button } from './ui/button'
-import { Input } from './ui/input'
 import SplashNotifications from './splash-notifications'
 import { Checkbox } from './ui/checkbox'
 import {Label} from '@/components/ui/label'
-import LoadingBar from './loading-bar'
 
 import { invoke } from '@tauri-apps/api/core';
-import { Users } from 'lucide-react'
-import { snapshotStore, userStore } from './store'
+import { snapshotStore, useErrorStore, userStore } from './store'
 import { DataTable } from './data_table'
 import { SnapshotFile } from './data_table_columns'
 
@@ -61,6 +49,9 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
 
   const setSnapshotFile = userStore((state) => state.setSelectedHistorySnapshotFile) // this is for the SELECTED history file string!
 
+  const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
+  
+
   useEffect(() => {
     const getDisks = async () => {
       try {
@@ -68,16 +59,19 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
 
         setDisks(result)
 
-      } catch (e) {
-
+      } catch (err) {
+        setCurrentBackendError(err)
         setDisks([{ name: "Unknown", desc: "No Disks Found" }])
-
       }
     }
 
     const testTable = async () => {
-      const temp2: SnapshotFile[] = await invoke('get_local_snapshot_files')
-      setSnapshotFiles(temp2)
+      try {
+        const temp2: SnapshotFile[] = await invoke('get_local_snapshot_files')
+        setSnapshotFiles(temp2)
+      } catch(err) {
+        setCurrentBackendError(err)
+      }
     }
 
     getDisks();
@@ -90,7 +84,6 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
     const selectedData = snapshotFiles[parseInt(selectedIndex)]
 
     // TODO maybe reset the global store rep if currently no row selected
-
 
 
     if(!selectedData){ // current workaround for this useafect not having correct data on startup (since nothing selected)
@@ -119,6 +112,7 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
       setWhichField(false); // state switch to anallytics screen
       
     } catch(e) {
+      setCurrentBackendError(e)
       console.log(e)
     }
   }
