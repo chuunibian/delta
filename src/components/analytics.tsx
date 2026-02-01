@@ -1,23 +1,17 @@
 import { Card } from "./ui/card";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
 import TopBar from "./top-bar";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import TestFileTreeSecond from "./tree-view";
 import Overview from "./overview-tab";
-import { ChartAreaInteractive } from "./test-chart";
-import { NotificationCenter } from "./TempNotificationCenter";
+import { NotificationCenter } from "./NotificationCenter";
+import { Button } from "./ui/button";
+import { invoke } from "@tauri-apps/api/core";
+import { useErrorStore } from "./store";
+import { BackendError } from "@/types";
 
 const Analytics = () => {
   // For shrinking window size have it at h-screen and overflow hidden since the main container
   // overflow-hidden will prevent parent container scroll bar
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-stone-800">
 
@@ -37,7 +31,7 @@ const Analytics = () => {
               </Card>
               <Card className="flex-1 min-h-0 p-3 overflow-auto">
                 {/* <ChartAreaInteractive></ChartAreaInteractive> */}
-                <NotificationCenter></NotificationCenter>
+                {/* <NotificationCenter></NotificationCenter> */}
               </Card>
             </div>
           </div>

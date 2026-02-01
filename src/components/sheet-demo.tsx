@@ -28,7 +28,7 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog"
 import { Trash2 } from "lucide-react"
-import { snapshotStore } from "./store"
+import { snapshotStore, useErrorStore } from "./store"
 
 export function SettingsPage() {
 
@@ -38,10 +38,19 @@ export function SettingsPage() {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [selectedRowFileName, setSelectedRowFileName] = useState<String>("");
 
+  // define variables to get gloval error stuff
+  const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
+
   useEffect(() => {
     const fetchFiles = async () => {
-      const temp2: SnapshotFile[] = await invoke('get_local_snapshot_files')
-      setSnapshotFiles(temp2)
+      try {
+        const temp2: SnapshotFile[] = await invoke('get_local_snapshot_files')
+        setSnapshotFiles(temp2)
+      } catch(err) {
+        setCurrentBackendError(err) // should be a BackendError Type
+        console.log("error fetch file disk data") // temp
+      }
+
     }
     fetchFiles();
   }, []); 
@@ -63,17 +72,13 @@ export function SettingsPage() {
     try {
       await invoke('delete_snapshot_file', { selectedRowFileName })
 
-      // refresh state
-      try {
-        const temp: SnapshotFile[] = await invoke('get_local_snapshot_files')
-        setSnapshotFiles(temp)
-        setRowSelection({})
-      } catch {
-        console.log("error fetch file disk data") // temp
-      }
-
-    } catch {
-      console.log("error occured when deleting")
+      // refresh list
+      const temp: SnapshotFile[] = await invoke('get_local_snapshot_files')
+      setSnapshotFiles(temp)
+      setRowSelection({})
+    } catch (err) {
+      setCurrentBackendError(err)
+      console.log("something failed")
     }
   }
 
@@ -149,9 +154,7 @@ export function SettingsPage() {
                 </CardFooter>
               </Card>
             </div>
-
           </div>
-
         </div>
 
         <SheetFooter className="p-4 border-t bg-background">

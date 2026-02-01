@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
 import { Folder, FolderOpen, Underline, File, Loader2 } from "lucide-react";
-import { CurrentEntryDetails, DirView, DirViewChildren, TreeDataNode } from "@/types";
+import { BackendError, CurrentEntryDetails, DirView, DirViewChildren, TreeDataNode } from "@/types";
 import { appendPaths } from "@/lib/utils";
 import { SnapshotFile } from "./data_table_columns";
 
@@ -25,8 +25,21 @@ interface FrontEndFileSystemStore {
 
 interface FrontEndSnapshotStore {
   previousSnapshots: SnapshotFile[];
-  setPreviousSnapshots: (snapshotFileList: SnapshotFile[]) => void;
+  setPreviousSnapshots: (snapshotFileList: SnapshotFile[]) => void; // need spread to force rerender
 }
+
+interface ErrorStore {
+  currentBackendErrors: BackendError[];
+  setCurrentBackendError: (newError: BackendError) => void; // send current backend error based on a new 
+}
+
+
+export const useErrorStore = create<ErrorStore>((set) => ({
+  currentBackendErrors: [],
+  setCurrentBackendError: (newError) => set((state) => ({ // append new error to list and forces ref change
+    currentBackendErrors: [...state.currentBackendErrors, newError]
+  })),
+}));
 
 
 export const snapshotStore = create<FrontEndSnapshotStore>((set, get) => ({
@@ -152,6 +165,7 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
         });
 
       } catch (error) {
+          useErrorStore.getState().setCurrentBackendError(error); // getState for non react lifecycle bound
           console.error(error);
           userStore.setState((state) => {
               currentNode.children = []; 

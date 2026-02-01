@@ -1,14 +1,9 @@
 import { MenubarShortcut } from './ui/menubar'
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
-import { Button } from './ui/button'
-import { ButtonGroup } from './ui/button-group'
 import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator } from './ui/menubar'
-import { Spinner } from './ui/spinner'
 import { userStore } from './store'
 import { Badge } from './ui/badge'
-import InfoFlagBar from './info_flag_bar'
-import { Sheet } from './ui/sheet'
 import { SettingsPage } from './sheet-demo'
+import { NotificationCenter } from './NotificationCenter'
 
 
 const TopBar = () => {
@@ -70,7 +65,7 @@ const TopBar = () => {
 
         <div className="flex flex-row items-center gap-x-3">
 
-            {/* <Spinner /> */}
+            <NotificationCenter></NotificationCenter>
 
             <SettingsPage></SettingsPage>
 
@@ -82,7 +77,6 @@ const TopBar = () => {
             <ArrowRightIcon className="w-2 h-2" />
             </Button>
             </ButtonGroup> */}
-            <NotificationCenter></NotificationCenter>
 
         </div>
     </div>
