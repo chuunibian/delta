@@ -11,7 +11,6 @@ mod database;
 mod disk; // compile my stuff
 mod error;
 mod model;
-mod preload;
 mod startup;
 
 #[tauri::command]
