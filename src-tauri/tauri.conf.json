@@ -13,8 +13,7 @@
     "windows": [
       {
         "title": "delta",
-        "width": 800,
-        "height": 600,
+        "maximized": true,
         "decorations": true
       }
     ],
