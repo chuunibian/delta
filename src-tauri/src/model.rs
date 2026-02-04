@@ -8,12 +8,9 @@ use std::time::SystemTime;
 use crate::database;
 use crate::error::AppError;
 
-// NOTE DUPLICATED STRING SAVE IN HASHMAP AND HTE NAME FIELD WE CAN SAVE MEMORY BY USING THE HASHMAP ONE?
-// Maybe only remove name from the files to prevent headaches
 pub struct BackendState {
     pub file_tree: Mutex<Option<Dir>>, // Overall this is the global in mem rep of what was scanned, thread protecting not sure if needed online does say so since it is global and tauri BE is multi Th
     pub local_appdata_path: Option<PathBuf>,
-    // pub chosen_snapshot: Option<String>, // used for appending to lcl_app_path (for selected snapshot) but maybe not use???
 }
 // ^ for that above consider not using a mutex and something else
 
@@ -22,12 +19,6 @@ pub struct Init_Disk {
     pub name: String,
     pub desc: String,
 }
-
-// For this I think date will be a Date object
-// then use chrono::NaiveDate this is a type
-// parse the file name into letter and unprocessed date
-// proces the date and convert into Date obj (2026-01-15)
-// send that over to frontend and it will be parsed into Javascript Date
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Snapshot_db_meta {
@@ -208,9 +199,7 @@ impl Dir {
                 }),
             },
             name: self.name.clone(),
-            id: self.id.to_string(), // need to convert to string here
-                                     // subdirviews: Vec::new(),
-                                     // files: Vec::new(),
+            id: self.id.to_string(),
         })
     }
 

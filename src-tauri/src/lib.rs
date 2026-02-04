@@ -1,9 +1,6 @@
-// Main part of editing for rust backend
-use humansize::{format_size, DECIMAL}; // link per file (pre compiled)
 use model::BackendState;
-use sysinfo::{Disks, System};
 use tauri::Manager;
-use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
+use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 use crate::error::AppError;
 

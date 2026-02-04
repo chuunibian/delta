@@ -1,12 +1,10 @@
 use humansize::{format_size, DECIMAL};
-use serde::de::value::Error;
 use std::collections::HashMap;
-use std::fmt::format;
-use std::fs::{self, File};
-use std::path::{self, PathBuf};
+use std::fs::{self};
+use std::path::PathBuf;
 use std::time::SystemTime;
-use sysinfo::{Disks, System};
-use tauri::{App, AppHandle, Emitter};
+use sysinfo::Disks;
+use tauri::{AppHandle, Emitter};
 use twox_hash::XxHash64;
 use walkdir::WalkDir;
 
