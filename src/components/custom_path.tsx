@@ -4,7 +4,7 @@ import { Input } from './ui/input'
 const CustomPath = () => {
   return (
     <>
-    <Input></Input>
+    <Input disabled></Input>
     </>
   )
 }

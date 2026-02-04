@@ -2,20 +2,19 @@ import { Card } from "./ui/card";
 import TopBar from "./top-bar";
 import TestFileTreeSecond from "./tree-view";
 import Overview from "./overview-tab";
-import { NotificationCenter } from "./NotificationCenter";
-import { Button } from "./ui/button";
-import { invoke } from "@tauri-apps/api/core";
-import { useErrorStore } from "./store";
-import { BackendError } from "@/types";
 
-const Analytics = () => {
+interface AnalyticsProps {
+  setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Analytics: React.FC<AnalyticsProps> = ({ setWhichField }) => {
   // For shrinking window size have it at h-screen and overflow hidden since the main container
   // overflow-hidden will prevent parent container scroll bar
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-stone-800">
 
-    <TopBar></TopBar>
+    <TopBar onHomeClick={() => setWhichField(true)}></TopBar>
 
       <main className="flex-1 flex min-h-0">
         <div className="flex flex-col w-full gap-1 pt-.5 pb-1 pl-1 pr-1 min-h-0">
