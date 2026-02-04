@@ -184,7 +184,7 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
       </Card>
 
       {/* Notifications card */}
-      <SplashNotifications></SplashNotifications>
+      {/* <SplashNotifications></SplashNotifications> */}
     </div>
   </div>
   )
