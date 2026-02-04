@@ -233,7 +233,6 @@ pub fn get_local_snapshot_files(
                 .to_string(); // file stem removes the file extension
 
             vec_file_names.push(parse_snapshot_file_name(&file_path_name)?);
-            // or do a let Some(name) = instead of the unwrap
         }
     }
 
@@ -247,11 +246,9 @@ fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, AppError>
     // naivedatetime parse from str should turn somethin like 20261220HHMM to a string
     let snapshot_meta = Snapshot_db_meta {
         drive_letter: path_segmented[0].to_string(),
-        date_time: NaiveDateTime::parse_from_str(path_segmented[1], "%Y%m%d%H%M")
-            .unwrap()
-            .to_string(),
-        date_sort_key: path_segmented[1].parse::<u64>().unwrap(),
-        size: path_segmented[2].parse::<u64>().unwrap(),
+        date_time: NaiveDateTime::parse_from_str(path_segmented[1], "%Y%m%d%H%M")?.to_string(),
+        date_sort_key: path_segmented[1].parse::<u64>()?,
+        size: path_segmented[2].parse::<u64>()?,
     };
 
     return Ok(snapshot_meta);

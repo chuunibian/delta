@@ -6,6 +6,7 @@ use std::sync::Mutex;
 use std::time::SystemTime;
 
 use crate::database;
+use crate::error::AppError;
 
 // NOTE DUPLICATED STRING SAVE IN HASHMAP AND HTE NAME FIELD WE CAN SAVE MEMORY BY USING THE HASHMAP ONE?
 // Maybe only remove name from the files to prevent headaches
@@ -149,6 +150,21 @@ impl Init_Disk {
 }
 
 impl Dir {
+    // pub fn to_dir_view_unexpanded_no_diff(&self) -> Result<DirView, AppError> {
+    //     Ok(DirView {
+    //         meta: DirViewMeta {
+    //             size: self.meta.size,
+    //             num_files: self.meta.num_files,
+    //             num_subdir: self.meta.num_subdir,
+    //             created: self.meta.created,
+    //             modified: self.meta.modified,
+    //             diff: None, // no history
+    //         },
+    //         name: self.name.clone(),
+    //         id: self.id.to_string(),
+    //     })
+    // }
+
     pub fn to_dir_view_unexpanded_no_diff(&self) -> DirView {
         DirView {
             meta: DirViewMeta {
@@ -171,11 +187,10 @@ impl Dir {
         &self,
         state: tauri::State<BackendState>,
         prev_snapshot_file_path: String,
-    ) -> DirView {
-        let temp_stat =
-            database::query_stats_from_id(&self, state, prev_snapshot_file_path).unwrap();
+    ) -> Result<DirView, AppError> {
+        let temp_stat = database::query_stats_from_id(&self, state, prev_snapshot_file_path)?;
 
-        DirView {
+        Ok(DirView {
             meta: DirViewMeta {
                 size: self.meta.size,
                 num_files: self.meta.num_files,
@@ -196,7 +211,7 @@ impl Dir {
             id: self.id.to_string(), // need to convert to string here
                                      // subdirviews: Vec::new(),
                                      // files: Vec::new(),
-        }
+        })
     }
 
     pub fn get_subdir_and_files_no_diff(&self) -> DirViewChildren {
@@ -237,10 +252,9 @@ impl Dir {
         &self,
         state: tauri::State<BackendState>,
         prev_snapshot_file_path: String,
-    ) -> DirViewChildren {
+    ) -> Result<DirViewChildren, AppError> {
         let mut temp_ht =
-            database::query_children_stats_from_parent_id(&self, state, prev_snapshot_file_path)
-                .unwrap();
+            database::query_children_stats_from_parent_id(&self, state, prev_snapshot_file_path)?;
 
         let mut file_view_vec: Vec<FileView> = Vec::new();
         let mut dir_view_vec: Vec<DirView> = Vec::new();
@@ -362,10 +376,10 @@ impl Dir {
         file_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
         dir_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
 
-        DirViewChildren {
+        Ok(DirViewChildren {
             files: file_view_vec,
             subdirviews: dir_view_vec,
-        }
+        })
     }
 }
 
