@@ -1,12 +1,10 @@
 use humansize::{format_size, DECIMAL};
-use serde::de::value::Error;
 use std::collections::HashMap;
-use std::fmt::format;
-use std::fs::{self, File};
-use std::path::{self, PathBuf};
+use std::fs::{self};
+use std::path::PathBuf;
 use std::time::SystemTime;
-use sysinfo::{Disks, System};
-use tauri::{App, AppHandle, Emitter};
+use sysinfo::Disks;
+use tauri::{AppHandle, Emitter};
 use twox_hash::XxHash64;
 use walkdir::WalkDir;
 
@@ -71,7 +69,7 @@ pub async fn disk_scan(
     };
 
     let root_view = match snapshot_flag {
-        true => root.to_dir_view_unexpanded(state.clone(), snapshot_file),
+        true => root.to_dir_view_unexpanded(state.clone(), snapshot_file)?,
         false => root.to_dir_view_unexpanded_no_diff(), // unexpanded initally
     };
 
@@ -109,7 +107,7 @@ pub fn query_new_dir_object(
         if snapshot_flag == false {
             Ok(current_dir.get_subdir_and_files_no_diff())
         } else {
-            Ok(current_dir.get_subdir_and_files(state.clone(), prev_snapshot_file_path))
+            current_dir.get_subdir_and_files(state.clone(), prev_snapshot_file_path)
         }
     } else {
         Err(AppError::GeneralLogicalErr(
@@ -134,8 +132,7 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
         if let Ok(entry) = entry_result {
             test_entry_progress_counter += 1; // [TEMP]
             if test_entry_progress_counter % 10000 == 0 {
-                // [TEMP]
-                app.emit("progress", test_entry_progress_counter).unwrap();
+                app.emit("progress", test_entry_progress_counter)?;
             }
 
             if entry.file_type().is_file() {
@@ -152,7 +149,6 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
                             if let Some(temp) = entry.path().to_str() {
                                 hash_path_id(temp)
                             } else {
-                                print!("error");
                                 hash_path_id("err")
                             }
                         },
@@ -182,7 +178,6 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
                                 if let Some(temp) = entry.path().to_str() {
                                     hash_path_id(temp)
                                 } else {
-                                    print!("error");
                                     hash_path_id("thereisnothingthisisjusttestchangelater")
                                 }
                             },
