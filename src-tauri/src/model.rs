@@ -34,7 +34,6 @@ pub enum Node<'a> {
     File(&'a File),
 }
 
-// Note we do not need serde here, this is backend only as we are going to send views of dir to frontend
 pub struct Dir {
     pub name: String,
     pub files: HashMap<String, File>,

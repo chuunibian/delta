@@ -1,6 +1,6 @@
-use std::{collections::HashMap, hash::Hash, process::Termination};
+use std::collections::HashMap;
 
-use rusqlite::{params, Connection, Transaction};
+use rusqlite::{params, Connection};
 
 use crate::error::AppError;
 use crate::model::{self, BackendState, Node, Snapshot_db_meta};
@@ -100,7 +100,6 @@ pub fn query_children_stats_from_parent_id(
     return Ok(temp_ht);
 }
 
-// TODO this command will also take a given string represnting folder letter + big endian date and then
 // write to that string as db file name, and the frontend is sending that name over
 #[tauri::command]
 pub async fn write_current_tree(

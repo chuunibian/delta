@@ -18,7 +18,7 @@ const TopBar = () => {
 
         <div className="flex flex-row items-center gap-x-3">
 
-        <Menubar className="z-50">
+        {/* <Menubar className="z-50">
             <MenubarMenu>
             <MenubarTrigger className="text-xs">File</MenubarTrigger>
             <MenubarContent>
@@ -44,7 +44,7 @@ const TopBar = () => {
                 </MenubarItem>
             </MenubarContent>
             </MenubarMenu>
-        </Menubar>
+        </Menubar> */}
 
         {/* <InfoFlagBar></InfoFlagBar> */}
 
