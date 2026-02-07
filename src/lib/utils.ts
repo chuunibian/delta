@@ -8,6 +8,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const formatDateTime = (dateStr: String) => {
+  return new Date(dateStr.replace(' ', 'T')).toLocaleString('en-US', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  }); 
+}
+
 export const formatBytes = (bytes: any) => {
   if (!bytes) return "0 B";
   return filesize(Number(bytes), { base: 2, standard: "jedec" }) as string;

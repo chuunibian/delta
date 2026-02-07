@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "./ui/checkbox"
+import { formatBytes, formatDateTime } from "@/lib/utils"
 /*
   current only have drive letter and date and also a date numerical item
   > Instance of data -> {"driveLetter": letter, "date": date, "date_key": key}
@@ -42,7 +43,7 @@ export const columns: ColumnDef<SnapshotFile>[] = [
     accessorKey: "dateKey", // Header is Date but the accessor key is the number date (for sorting)
     header: "Date",
     cell: ({row}) => {
-      return <div>{row.original.date_time}</div>
+      return <div>{formatDateTime(row.original.date_time)}</div>
     }
   },
   {
@@ -50,7 +51,7 @@ export const columns: ColumnDef<SnapshotFile>[] = [
     header: "Size",
     cell: ({row}) => {
       return <div>
-        <p>{row.original.size}</p>
+        <p>{formatBytes(row.original.size)}</p>
       </div>
     }
   }
