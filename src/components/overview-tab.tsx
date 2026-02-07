@@ -63,9 +63,6 @@ export default function Overview() {
                     <Badge variant="secondary" className="font-normal text-xs text-muted-foreground">
                         {currentNode.directory ? 'Directory' : 'File'}
                     </Badge>
-                    <Badge variant="outline" className="font-normal text-xs text-muted-foreground font-mono">
-                        id: {currentNode.id}
-                    </Badge>
                 </div>
         </div>
         
