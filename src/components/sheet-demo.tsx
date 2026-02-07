@@ -27,7 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog"
-import { Trash2 } from "lucide-react"
+import { Trash2, Settings } from "lucide-react"
 import { snapshotStore, useErrorStore } from "./store"
 
 export function SettingsPage() {
@@ -85,7 +85,9 @@ export function SettingsPage() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Settings</Button>
+        <Button variant="outline" size="icon" className="h-7 w-7">
+          <Settings></Settings>
+        </Button>
       </SheetTrigger>
       
       <SheetContent className="w-full sm:max-w-xl flex flex-col h-full p-0 gap-0">

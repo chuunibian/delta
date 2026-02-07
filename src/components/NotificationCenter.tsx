@@ -55,7 +55,7 @@ export function NotificationCenter() {
   return (
     <Popover onOpenChange={handleNotificationOpen}>
       <PopoverTrigger>
-        <Button variant="outline" size="icon" className="relative">
+        <Button variant="outline" size="icon" className="relative h-7 w-7">
           <Bell className="h-4 w-4" />
           {unreadCount > 0 && (
             <Badge
@@ -72,30 +72,26 @@ export function NotificationCenter() {
         <div className="p-2 font-medium text-sm">Notifications</div>
         <ScrollArea className="h-[375px]">
           <div className="flex flex-col gap-1 p-2">
-            {backendErrorList.map((notification, index) => (
-              <div className="flex flex-col gap-2 p-2">
-                {backendErrorList.map((notification, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col gap-1 rounded-md p-3 text-xs transition-colors hover:bg-muted/50 bg-muted/20 border border-red-500/30"
-                  >
-                    <div className="text-sm font-bold text-red-600 dark:text-red-400">
-                      {`Error: ${notification.err_code}`}
-                    </div>
-                    {notification.library_generated_error_desc?.toLowerCase() !== "n/a" && (
-                      <div className="font-medium text-[12px] text-foreground leading-tight">
-                        {notification.library_generated_error_desc}
-                      </div>
-                    )}
-                    {notification.user_error_string_desc?.toLowerCase() !== "n/a" && (
-                      <div className="text-[12px] text-muted-foreground line-clamp-2 italic">
-                        {notification.user_error_string_desc}
-                      </div>
-                    )}
+              {backendErrorList.map((notification, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col gap-1 rounded-md p-3 text-xs transition-colors hover:bg-muted/50 bg-muted/20 border border-red-500/30"
+                >
+                  <div className="text-sm font-bold text-red-600 dark:text-red-400">
+                    {`Error: ${notification.err_code}`}
                   </div>
-                ))}
-              </div>
-            ))}
+                  {notification.library_generated_error_desc?.toLowerCase() !== "n/a" && (
+                    <div className="font-medium text-[12px] text-foreground leading-tight">
+                      {notification.library_generated_error_desc}
+                    </div>
+                  )}
+                  {notification.user_error_string_desc?.toLowerCase() !== "n/a" && (
+                    <div className="text-[12px] text-muted-foreground line-clamp-2 italic">
+                      {notification.user_error_string_desc}
+                    </div>
+                  )}
+                </div>
+              ))}
           </div>
         </ScrollArea>
       </PopoverContent>

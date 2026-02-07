@@ -1,5 +1,3 @@
-import { MenubarShortcut } from './ui/menubar'
-import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator } from './ui/menubar'
 import { userStore } from './store'
 import { Badge } from './ui/badge'
 import { SettingsPage } from './sheet-demo'
@@ -11,7 +9,6 @@ interface TopBarProps {
   onHomeClick?: () => void;
 }
 
-
 const TopBar = ({ onHomeClick }: TopBarProps) => {
     const currentPath = userStore((state) => state.currentPath)
     const currentEntryDetails = userStore((state) => state.currentEntryDetail)
@@ -19,13 +16,13 @@ const TopBar = ({ onHomeClick }: TopBarProps) => {
     let numsubfile = currentEntryDetails.numsubfile ? String(currentEntryDetails.numsubfile) : ("0");
 
   return (
-    <div className='flex flex-row items-center justify-between w-full pl-2 pr-2 bg-stone-800'>
+    <div className='flex flex-row items-center justify-between w-full pl-2 pr-2 pb-1 pt-1 bg-stone-800'>
         <div className="flex flex-row items-center gap-x-2">
 
             {onHomeClick && (
-            <Button variant="outline" size="icon" onClick={onHomeClick} className="">
-                <ArrowLeft className="h-2 w-2" />
-            </Button>
+                <Button variant="outline" size="icon" onClick={onHomeClick} className="h-7 w-7">
+                    <ArrowLeft className="h-4 w-4" />
+                </Button>
             )}
 
             {/* <Menubar className="z-50">
@@ -67,26 +64,13 @@ const TopBar = ({ onHomeClick }: TopBarProps) => {
                 variant="outline">
                     {currentPath}
                 </Badge>
-
             </div>
 
         </div>
 
         <div className="flex flex-row items-center gap-x-2">
-
             <NotificationCenter></NotificationCenter>
-
             <SettingsPage></SettingsPage>
-
-            {/* <ButtonGroup>
-            <Button variant="outline" size="icon-sm" aria-label="Previous">
-            <ArrowLeftIcon className="w-2 h-2" />       
-            </Button>
-            <Button variant="outline" size="icon-sm" aria-label="Next">
-            <ArrowRightIcon className="w-2 h-2" />
-            </Button>
-            </ButtonGroup> */}
-
         </div>
     </div>
   )
