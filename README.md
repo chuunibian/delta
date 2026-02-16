@@ -2,13 +2,7 @@
 
 A disk space analyzer that allows a more streamlined view of a computer's disks with the capability to compare current scans to previous saved scans for size comparisons.
 
-<video
-src="images/deltavideo.mp4"
-autoplay
-loop
-muted
-playsinline
-style="max-width: 900px; width: 100%;"> </video>
+<video src="images/deltavideo.mp4" autoplay loop muted playsinline style="max-width: 900px; width: 100%;"></video>
 
 ## Features
 
