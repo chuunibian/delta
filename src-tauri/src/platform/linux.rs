@@ -45,16 +45,15 @@ pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
 
 pub fn clean_disk_name(disk_name: &str) -> Result<String, AppError> {
     if disk_name.is_empty() {
-        return (Err(AppError::GeneralLogicError(
+        return (Err(AppError::GeneralLogicalErr(
             "Linux drive name is empty".to_string(),
         )));
     }
 
     // Linux drives is either root or mounted somewhere under root so if not start with / then error
     if !disk_name.starts_with("/") {
-        return (Err(AppError::GeneralLogicError(format!(
-            "Linux drive name -> {disk_name} does not start with root /",
-            disk_name
+        return (Err(AppError::GeneralLogicalErr(format!(
+            "Linux drive name -> {disk_name} does not start with root /"
         ))));
     }
 
