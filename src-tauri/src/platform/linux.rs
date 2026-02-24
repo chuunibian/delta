@@ -1,9 +1,7 @@
-pub fn startup_checks(local_appdata_path: &Path) -> Result<(), AppError> {
-    appdata_folder_check(local_appdata_path)?;
-    manage_local_appdata_app_folder(local_appdata_path)?;
+use std::fs;
+use std::path::Path;
 
-    Ok(())
-}
+use crate::error::AppError;
 
 pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
     // let snapshot_folder = local_appdata_path.join("tempsnapshot");
