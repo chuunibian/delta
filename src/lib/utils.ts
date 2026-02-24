@@ -1,8 +1,10 @@
 import { clsx, type ClassValue } from "clsx"
 import { filesize } from "filesize";
 import { twMerge } from "tailwind-merge"
+import { sep } from '@tauri-apps/api/path';
 
-const windowsPathSeparator = '\\';
+// const windowsPathSeparator = '\\';
+const pathSeparator = sep(); // get the path sep dyn for win or linux
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -26,9 +28,9 @@ export function appendPaths (prevPath: string, currentPath: string) {
     return currentPath;
   }
 
-  if (prevPath.endsWith(windowsPathSeparator)) {
+  if (prevPath.endsWith(pathSeparator)) {
     return `${prevPath}${currentPath}`
   }
 
-  return `${prevPath}\\${currentPath}`
+  return `${prevPath}${pathSeparator}${currentPath}`
 }

@@ -60,9 +60,6 @@ pub async fn disk_scan(
     snapshot_file: String, // String, I think can bind the initial root scan input to this entry func or make a new func (decouple) for that
     snapshot_flag: bool,   // temp? for the inital root (also thsi func) to compare or not compare
 ) -> Result<model::DirView, AppError> {
-    println!("Starting Scan");
-
-    // let root = naive_scan(&target)?; // populate the data structure
     let root = match naive_scan(&target, app) {
         Ok(root) => root,
         Err(e) => return Err(e),
@@ -122,6 +119,7 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
 
     let walker = WalkDir::new(target)
         .contents_first(true)
+        .same_file_system(true)
         .follow_links(false);
 
     let mut current_dir_size: u64 = 0;

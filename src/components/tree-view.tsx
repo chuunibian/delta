@@ -5,13 +5,14 @@ import { Folder, File, FolderOpen, ArrowRight } from "lucide-react";
 import { filesize } from "filesize";
 import { Badge } from "./ui/badge";
 import InfoFlagBar from "./info_flag_bar";
-import {formatBytes} from "../lib/utils"
+import {formatBytes, pathSeparator} from "../lib/utils"
 import { Progress } from "./ui/progress";
 
 
 function parsePathToSegment(path: string | undefined): string[] {
   const checked = path ?? "";
-  const segments = checked.split('\\');
+  // NEW
+  const segments = checked.split(pathSeparator);
   return segments.slice(1).filter(s => s.length > 0);
 }
 
