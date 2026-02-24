@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge"
 import { sep } from '@tauri-apps/api/path';
 
 // const windowsPathSeparator = '\\';
-const pathSeparator = sep(); // get the path sep dyn for win or linux
+export const pathSeparator = sep(); // get the path sep dyn for win or linux
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
