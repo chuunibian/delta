@@ -243,15 +243,27 @@ pub fn get_local_snapshot_files(
 fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, AppError> {
     let path_segmented: Vec<&str> = path.split("_").collect();
 
-    // naivedatetime parse from str should turn somethin like 20261220HHMM to a string
-    let snapshot_meta = Snapshot_db_meta {
-        drive_letter: path_segmented[0].to_string(),
-        date_time: NaiveDateTime::parse_from_str(path_segmented[1], "%Y%m%d%H%M")?.to_string(),
-        date_sort_key: path_segmented[1].parse::<u64>()?,
-        size: path_segmented[2].parse::<u64>()?,
-    };
+    if path_segmented.len() != 3 {
+        return Err(AppError::GeneralLogicalErr(
+            "Invalid formatted snapshot file found in app local storage. Restart App.".to_string(),
+        ));
+    }
 
-    return Ok(snapshot_meta);
+    if let [drive_name, date, size] = path_segmented.as_slice() {
+        // naivedatetime parse from str should turn somethin like 20261220HHMM to a string
+        let snapshot_meta = Snapshot_db_meta {
+            drive_letter: drive_name.to_string(),
+            date_time: NaiveDateTime::parse_from_str(date, "%Y%m%d%H%M")?.to_string(),
+            date_sort_key: date.parse::<u64>()?,
+            size: size.parse::<u64>()?,
+        };
+
+        return Ok(snapshot_meta);
+    } else {
+        return Err(AppError::GeneralLogicalErr(
+            "Cannot parse malformed snapshot filename. Restart application".to_string(),
+        ));
+    };
 }
 
 #[tauri::command]
