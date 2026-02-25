@@ -26,7 +26,7 @@ pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
 
         if file_name_parts.len() != 3 {
             fs::remove_file(entry_path)?;
-            return (AppError::StartupError(
+            return Err(AppError::StartupError(
                 "A file in the local storage failed to satisfy name constraints".to_string(),
             ));
         }
