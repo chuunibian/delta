@@ -102,9 +102,14 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
 
       const zustandInitFunc = userStore.getState().initDirData;
 
-      if (saveCurrentSnapshotFlag) { // if that checkbox is checked then run the write func
-        const selectedDiskLetter = target[0] // first letter of the screen can be more defensive however
-        const temp = await invoke('write_current_tree', {selectedDiskLetter});
+      // if (saveCurrentSnapshotFlag) { // if that checkbox is checked then run the write func
+      //   const selectedDiskLetter = target[0] // first letter of the screen can be more defensive however
+      //   const temp = await invoke('write_current_tree', {selectedDiskLetter});
+      // }
+
+      if (saveCurrentSnapshotFlag) {
+        const selectedDisk = target
+        const temp = await invoke('write_current_tree', {selectedDisk});
       }
       
       zustandInitFunc(result);

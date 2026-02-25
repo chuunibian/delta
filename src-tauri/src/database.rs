@@ -1,14 +1,12 @@
-use std::collections::HashMap;
-
+use chrono::Local;
+use chrono::NaiveDateTime;
 use rusqlite::{params, Connection};
+use std::collections::HashMap;
+use std::fs;
 
 use crate::error::AppError;
 use crate::model::{self, BackendState, Node, Snapshot_db_meta};
-
-use chrono::Local;
-use chrono::NaiveDateTime;
-
-use std::fs;
+use crate::platform::clean_disk_name;
 
 pub struct SnapshotRecord {
     pub id: i64,
@@ -101,19 +99,22 @@ pub fn query_children_stats_from_parent_id(
 }
 
 // write to that string as db file name, and the frontend is sending that name over
+// TODO change selected_disk_letter to drive name! For linux need to handle it
 #[tauri::command]
 pub async fn write_current_tree(
     state: tauri::State<'_, BackendState>,
-    selected_disk_letter: String,
+    selected_disk: String,
 ) -> Result<(), AppError> {
     let guard = state.file_tree.lock().unwrap();
     if guard.is_none() {
         return Ok(());
     }
     let root_ref = guard.as_ref().unwrap();
-    let root_size_bytes = root_ref.meta.size; // size of root
+    let root_size_bytes = root_ref.meta.size;
 
     let local_time = Local::now();
+
+    let selected_disk_name = clean_disk_name(&selected_disk)?;
 
     let temp_data_db_path = state
         .local_appdata_path
@@ -122,10 +123,10 @@ pub async fn write_current_tree(
         .join("tempsnapshot")
         .join(format!(
             "{}_{}_{}.db",
-            selected_disk_letter,
+            selected_disk_name,
             local_time.format("%Y%m%d%H%M").to_string(),
             root_size_bytes.to_string()
-        )); // maybe format isnt the most defensive here?
+        ));
 
     let mut conn = Connection::open(&temp_data_db_path)?;
 

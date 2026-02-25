@@ -9,6 +9,7 @@ mod disk; // compile my stuff
 mod error;
 mod model;
 mod startup;
+mod platform;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
