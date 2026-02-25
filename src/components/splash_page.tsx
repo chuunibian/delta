@@ -4,7 +4,6 @@ import DiskPath from './disk_path'
 import { Separator } from '@/components/ui/separator'
 import CustomPath from './custom_path'
 import { Button } from './ui/button'
-import SplashNotifications from './splash-notifications'
 import { Checkbox } from './ui/checkbox'
 import {Label} from '@/components/ui/label'
 
@@ -85,7 +84,6 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
 
     // TODO maybe reset the global store rep if currently no row selected
 
-
     if(!selectedData){ // current workaround for this useafect not having correct data on startup (since nothing selected)
       return;
     }
@@ -101,11 +99,6 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
       console.timeEnd("invoke");
 
       const zustandInitFunc = userStore.getState().initDirData;
-
-      // if (saveCurrentSnapshotFlag) { // if that checkbox is checked then run the write func
-      //   const selectedDiskLetter = target[0] // first letter of the screen can be more defensive however
-      //   const temp = await invoke('write_current_tree', {selectedDiskLetter});
-      // }
 
       if (saveCurrentSnapshotFlag) {
         const selectedDisk = target

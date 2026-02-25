@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
-import { Folder, FolderOpen, Underline, File, Loader2 } from "lucide-react";
 import { BackendError, CurrentEntryDetails, DirView, DirViewChildren, TreeDataNode } from "@/types";
 import { appendPaths } from "@/lib/utils";
 import { SnapshotFile } from "./data_table_columns";

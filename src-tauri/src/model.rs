@@ -140,21 +140,6 @@ impl Init_Disk {
 }
 
 impl Dir {
-    // pub fn to_dir_view_unexpanded_no_diff(&self) -> Result<DirView, AppError> {
-    //     Ok(DirView {
-    //         meta: DirViewMeta {
-    //             size: self.meta.size,
-    //             num_files: self.meta.num_files,
-    //             num_subdir: self.meta.num_subdir,
-    //             created: self.meta.created,
-    //             modified: self.meta.modified,
-    //             diff: None, // no history
-    //         },
-    //         name: self.name.clone(),
-    //         id: self.id.to_string(),
-    //     })
-    // }
-
     pub fn to_dir_view_unexpanded_no_diff(&self) -> DirView {
         DirView {
             meta: DirViewMeta {
