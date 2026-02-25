@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import SplashPage from '@/components/splash_page'
 import { ThemeProvider } from './components/theme-provider'
-import Dashboard from './components/dashboard'
 import Analytics from './components/analytics'
 
 const App = () => {

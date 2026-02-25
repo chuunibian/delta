@@ -3,8 +3,10 @@ use std::path::Path;
 
 use crate::error::AppError;
 
+// Checks .local application folder for malformed files, and cleans the folder if there is
 pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
     let snapshot_folder = local_appdata_path.join("tempsnapshot");
+    let mut error_flag = false;
 
     if !snapshot_folder.exists() {
         return Err(AppError::StartupError(
@@ -20,20 +22,22 @@ pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
         let entry_path_string = entry.file_name().to_string_lossy().to_string();
         let file_name_parts: Vec<&str> = entry_path_string.split('_').collect();
 
-        if file_name_parts.len() != 3 {
-            fs::remove_file(entry_path)?;
-            return Err(AppError::StartupError(
-                "A file in the local storage failed to satisfy name constraints".to_string(),
-            ));
-        }
+        let temp_valid_flag = if let [drive, date, size] = file_name_parts.as_slice() {
+            date.len() == 12
+        } else {
+            false
+        };
 
-        if file_name_parts[1].len() != 12 {
+        if !temp_valid_flag {
+            error_flag = true;
             fs::remove_file(entry_path)?;
-            return Err(AppError::StartupError(
-                "A file in the local storage failed to satisfy name constraints. Date is wrong"
-                    .to_string(),
-            ));
         }
+    }
+
+    if error_flag == true {
+        return Err(AppError::StartupError(
+            "File(s) in the local storage failed to satisfy name constraints".to_string(),
+        ));
     }
 
     Ok(())
