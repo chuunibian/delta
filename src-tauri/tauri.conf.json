@@ -24,6 +24,10 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "publisher": "Austin Bian",
+    "category": "Utility",
+    "shortDescription": "Disk space analyzer with historical snapshot comparison ability",
+    "longDescription": "A disk space analyzer that allows you to compare a current scan on a specific disk with previous saved scans to compare size and file/folder changes.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
