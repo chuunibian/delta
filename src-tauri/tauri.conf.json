@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "delta-disk-analyzer",
+  "productName": "delta",
   "version": "0.1.5",
   "identifier": "com.github.bian.delta",
   "build": {
