@@ -1,8 +1,8 @@
 [package]
-name = "delta-disk-analyzer"
+name = "delta"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Disk space analyzer with historical snapshot comparison ability"
+authors = ["Austin Bian"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
