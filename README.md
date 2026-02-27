@@ -4,6 +4,12 @@ A disk space analyzer that allows a more streamlined view of a computer's disks 
 
 ![Delta Project Screenshot](images/deltademo.gif)
 
+## Example Usage
+
+- Select and scan desired current disk and have the option to save the snapshot which is identified by date and drive name.
+- If there are previous stored snapshots then you can compare with previous a snapshot.
+- The comparison will then for every file system entry show the size difference or the absense or inclusion of a file system entry.
+
 ## Features
 
 - **Scan Comparisons:** Save snapshots of your disk state and compare current scans to previous ones. Allows user to identify which folders have grown in size.
@@ -40,8 +46,6 @@ A disk space analyzer that allows a more streamlined view of a computer's disks 
 
 ## Future Plans With Comments
 
-- [ ] Auto Updating App
-  - Tauri should have a plugin to auto update app on new releases and github should provide an endpoint for releases.
 - [ ] Performance Changes
   - The memory footprint currently I think is "ok" however I think there are better approaches that are easily implementable which don't change speed of app.
   - The scan speed is not very fast since it is a naive implementation of a recursive algorithm making make many sys calls.
@@ -51,10 +55,8 @@ A disk space analyzer that allows a more streamlined view of a computer's disks 
   - Also other visual components can also be added.
 - [ ] Managing Incorrect Assumptions About Disks
   - For Windows the app currently categorizes snapshots by the letter aliase which is sorta wrong because Windows can change that letter for many reasons so some more OS native name for the disk should be the actual identifier of snapshots.
-- [ ] Cross Platform
-  - Only for Windows now but since Mac, Linux also have their own native WebViews I think the app can also work on there.
-- [ ] Frontend Performance Changes
-  - There are parts that I think can be more modular on frontend which can save compute resources when React triggers rerendering. There are probably also some not so good practices going on in frontend.
+- [o] Cross Platform
+  - Linux and Windows builds.
 - [ ] Adding Intelligence To Diffing
   - The diff between 2 snapshots is not smart in anyway, for example in Folder "A" if it contains a folder "B" that was renamed then it will recognize that folder as "new" (However if the overall size of the folder "B" didnt change) then Folder "A" size will reflect the reality. I think a way to make it so it doesnt flag new is to add some huersitics.
 
