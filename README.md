@@ -1,5 +1,8 @@
 # Delta
 
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+
 A disk space analyzer that allows a more streamlined view of a computer's disks with the capability to compare current scans to previous saved scans for size comparisons.
 
 ![Delta Project Screenshot](images/deltademo.gif)
@@ -55,8 +58,6 @@ A disk space analyzer that allows a more streamlined view of a computer's disks 
   - Also other visual components can also be added.
 - [ ] Managing Incorrect Assumptions About Disks
   - For Windows the app currently categorizes snapshots by the letter aliase which is sorta wrong because Windows can change that letter for many reasons so some more OS native name for the disk should be the actual identifier of snapshots.
-- [o] Cross Platform
-  - Linux and Windows builds.
 - [ ] Adding Intelligence To Diffing
   - The diff between 2 snapshots is not smart in anyway, for example in Folder "A" if it contains a folder "B" that was renamed then it will recognize that folder as "new" (However if the overall size of the folder "B" didnt change) then Folder "A" size will reflect the reality. I think a way to make it so it doesnt flag new is to add some huersitics.
 
