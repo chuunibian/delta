@@ -27,29 +27,29 @@ export type SnapshotFile = {
   date_sort_key: number,
   size: number,
 }
- 
+
 export const columns: ColumnDef<SnapshotFile>[] = [
   {
     accessorKey: "driveLetter",
-    header: "Drive Letter",
-    cell: ({row}) => { // Cell is basically how the actual value is rendered 
+    header: "Drive Name",
+    cell: ({ row }) => { // Cell is basically how the actual value is rendered 
       return <div className="flex flex-row gap-2">
         <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)}></Checkbox>
         <p>{row.original.drive_letter}</p>
-        </div> 
+      </div>
     }
   },
   {
     accessorKey: "dateKey", // Header is Date but the accessor key is the number date (for sorting)
     header: "Date",
-    cell: ({row}) => {
+    cell: ({ row }) => {
       return <div>{formatDateTime(row.original.date_time)}</div>
     }
   },
   {
     accessorKey: "size",
     header: "Size",
-    cell: ({row}) => {
+    cell: ({ row }) => {
       return <div>
         <p>{formatBytes(row.original.size)}</p>
       </div>
