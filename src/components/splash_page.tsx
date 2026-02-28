@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import CustomPath from './custom_path'
 import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
-import {Label} from '@/components/ui/label'
+import { Label } from '@/components/ui/label'
 
 import { invoke } from '@tauri-apps/api/core';
 import { snapshotStore, useErrorStore, userStore } from './store'
@@ -24,13 +24,11 @@ interface SplashPageProps {
   setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
+const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
   const [disks, setDisks] = useState<InitDisk[]>([]);
 
   const [selectedDisk, setSelectedDisk] = useState<string>("");
-
-  // const [snapshotFiles, setSnapshotFiles] = useState<SnapshotFile[]>([]);
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -49,7 +47,7 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
   const setSnapshotFile = userStore((state) => state.setSelectedHistorySnapshotFile) // this is for the SELECTED history file string!
 
   const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
-  
+
 
   useEffect(() => {
     const getDisks = async () => {
@@ -68,7 +66,7 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
       try {
         const temp2: SnapshotFile[] = await invoke('get_local_snapshot_files')
         setSnapshotFiles(temp2)
-      } catch(err) {
+      } catch (err) {
         setCurrentBackendError(err)
       }
     }
@@ -84,7 +82,7 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
 
     // TODO maybe reset the global store rep if currently no row selected
 
-    if(!selectedData){ // current workaround for this useafect not having correct data on startup (since nothing selected)
+    if (!selectedData) { // current workaround for this useafect not having correct data on startup (since nothing selected)
       return;
     }
 
@@ -95,96 +93,89 @@ const SplashPage: React.FC<SplashPageProps>  = ({ setWhichField }) => {
     try {
 
       console.time("invoke");
-      const result = await invoke<DirView>('disk_scan', {target, snapshotFile, snapshotFlag});
+      const result = await invoke<DirView>('disk_scan', { target, snapshotFile, snapshotFlag });
       console.timeEnd("invoke");
 
       const zustandInitFunc = userStore.getState().initDirData;
 
       if (saveCurrentSnapshotFlag) {
         const selectedDisk = target
-        const temp = await invoke('write_current_tree', {selectedDisk});
+        const temp = await invoke('write_current_tree', { selectedDisk });
       }
-      
+
       zustandInitFunc(result);
 
       setWhichField(false); // state switch to anallytics screen
-      
-    } catch(e) {
+
+    } catch (e) {
       setCurrentBackendError(e)
       console.log(e)
     }
   }
 
-  
+
   return (
-    // <div className="flex min-h-screen items-center justify-center bg-stone-800 p-10 gap-6">
-    // <div className="flex min-h-screen flex-wrap items-center justify-center bg-stone-800 p-10 gap-6">
     <div className="flex flex-col h-screen bg-stone-800">
       <TopBar></TopBar>
 
       <div className="flex flex-1 flex-wrap items-center justify-center gap-6 p-6 overflow-auto">
 
         {/* Temp image */}
-        <img src={DeltaLogo} alt="This the App Logo" className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9'/>
+        <img src={DeltaLogo} alt="This the App Logo" className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9' />
 
-        {/* <TopBar></TopBar> */}
         {/* Test data table for snapshots, datatable should be generic */}
         <Card className='p-3 min-w-[350px]'>
           <DataTable columns={columns} data={snapshotFiles} rowSelection={rowSelection} setRowSelection={setRowSelection} ></DataTable>
-          {/* <p>{snapshotFile}</p> */}
         </Card>
-      
+
 
         {/* disk scan card */}
         <Card className='w-[28rem] p-7'>
-        <CardHeader>
-          <CardTitle>Start Snapshot</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-5">
-            <p className="text-sm leading-none font-medium">"Disk"</p>
-            <DiskPath disks={disks} onValueChange={setSelectedDisk}></DiskPath>
-            <Separator></Separator>
-            <p className="text-sm leading-none font-medium">"Custom Path"</p>
-            <CustomPath></CustomPath>
-            <Separator></Separator>
-            {/* Dry run checkbox */}
-            <div className="flex items-start gap-3">
-              <Checkbox id="terms-2" disabled={snapshotFile===""} checked={snapshotFlag} onCheckedChange={setSnapshotFlag}/>
-              <div className="grid gap-2">
-                <Label htmlFor="terms-2">Compare Snapshots</Label>
-                <p className="text-muted-foreground text-sm">
-                  Compare current scan with previous scanned snapshot
-                </p>
+          <CardHeader>
+            <CardTitle>Start Snapshot</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col space-y-5">
+              <p className="text-sm leading-none font-medium">"Disk"</p>
+              <DiskPath disks={disks} onValueChange={setSelectedDisk}></DiskPath>
+              <Separator></Separator>
+              <p className="text-sm leading-none font-medium">"Custom Path"</p>
+              <CustomPath></CustomPath>
+              <Separator></Separator>
+              {/* Dry run checkbox */}
+              <div className="flex items-start gap-3">
+                <Checkbox id="terms-2" disabled={snapshotFile === ""} checked={snapshotFlag} onCheckedChange={setSnapshotFlag} />
+                <div className="grid gap-2">
+                  <Label htmlFor="terms-2">Compare Snapshots</Label>
+                  <p className="text-muted-foreground text-sm">
+                    Compare current scan with previous scanned snapshot
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <Separator></Separator>
+              <Separator></Separator>
 
-            <div className="flex items-start gap-3">
-              <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*//> 
-              <div className="grid gap-2">
-                <Label htmlFor="terms-2">Save Snapshot</Label>
-                <p className="text-muted-foreground text-sm">
-                  Save current scan into new snapshot file
-                </p>
+              <div className="flex items-start gap-3">
+                <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*/ />
+                <div className="grid gap-2">
+                  <Label htmlFor="terms-2">Save Snapshot</Label>
+                  <p className="text-muted-foreground text-sm">
+                    Save current scan into new snapshot file
+                  </p>
+                </div>
               </div>
+
             </div>
-
-          </div>
-        </CardContent>
-        <CardFooter>
-          <div className="w-full flex flex-row items-center justify-center gap-3">
-          <Button variant="outline" onClick={() => runScan(selectedDisk)}>Scan</Button>
-          <Progress></Progress>
-          </div>
-        </CardFooter>
-      </Card>
-
-      {/* Notifications card */}
-      {/* <SplashNotifications></SplashNotifications> */}
+          </CardContent>
+          <CardFooter>
+            <div className="w-full flex flex-row items-center justify-center gap-3">
+              <Button variant="outline" onClick={() => runScan(selectedDisk)}>Scan</Button>
+              <Progress></Progress>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
-  </div>
   )
 }
 
