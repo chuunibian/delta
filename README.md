@@ -5,7 +5,6 @@
 
 A disk space analyzer built with Rust and Tauri. Instead of just showing you what is on your drive right now, Delta lets you save snapshots of your disk state and compare them over time to see exactly which files and folders are eating up your space.
 
-
 ![Delta Project GIF](images/deltademo.gif)
 
 You can also view the high-quality [Demo Video](images/demo-delta.mp4).
@@ -16,7 +15,7 @@ You can also view the high-quality [Demo Video](images/demo-delta.mp4).
 
 2. Waiting Time: Wait a few days or weeks (or any unit of time).
 
-3. Compare & Diff: Select your target drive to scan and then select your snapshot file to compare against. Then click the compare snapshots checkbox and click scan. Delta will show differences in a directory entry's size as well as subdirectories and subfiles added for directories.
+3. Compare & Diff: Select your target drive to scan and then select your snapshot file to compare against. Then click the compare snapshots checkbox and click scan. Delta will show differences in a directory entry's size as well as subdirectories and files added for directories.
 
 Green numbers mean the directory entry in the current scan has fewer bytes than the same folder in the previous scan. Red numbers mean the directory entry in the current scan has more bytes than the same folder in the previous scan. Grey numbers mean there was no change in size.
 
@@ -76,7 +75,7 @@ Contributions, issues, feedback, and feature requests are highly welcome. For bu
 
 ## Comments
 
-This project was built out of curiosity to learn and apply rust in a utility project. I find disk space analyzers useful for when my drives are running low on space or just investigating disk space fluctuations, but I felt without the ability to compare to previous scans, it takes much longer to find some changes. This application is fully self-contained. It requires no internet connection to function and does not send any telemetry or usage data to external servers. The project is open source and will always stay so.
+This project was built out of curiosity to learn and apply rust in a utility project. I find disk space analyzers useful for when my drives are running low on space or just investigating disk space fluctuations, but I felt without the ability to compare to previous scans, it takes much longer to find some changes. The project is open source and will always stay so.
 
 ## License
 
