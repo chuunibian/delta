@@ -3,7 +3,8 @@
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 
-A disk space analyzer that allows a more streamlined view of a computer's disks with the capability to compare current scans to previous saved scans for size comparisons.
+A disk space analyzer built with Rust and Tauri. Instead of just showing you what is on your drive right now, Delta lets you save snapshots of your disk state and compare them over time to see exactly which files and folders are eating up your space.
+
 
 ![Delta Project GIF](images/deltademo.gif)
 
@@ -11,13 +12,13 @@ You can also view the high-quality [Demo Video](images/demo-delta.mp4).
 
 ## How to Use Delta
 
-1. Run a Baseline Scan: If you are a new user to the software then there will not be any previously saved snapshots. Select your target drive from the dropdown menu and select the save snapshot to initiate a scan to view your current storage distribution and save the scan as a snapshot.
+1. Run a Baseline Scan: If you are a new user to the software then there will not be any previously saved snapshots. Select your target drive from the dropdown menu and select the save snapshot to initiate a scan to view your current storage distribution and save the scan as a snapshot. Snapshots are automatically tagged with their disk name and capture date.
 
-2. Analyze over Time: Wait a few days or weeks (or anything in between).
+2. Waiting Time: Wait a few days or weeks (or any unit of time).
 
-3. Compare & Diff: Select your target drive and then select your snapshot file to compare against. Then click the compare snapshots checkbox. Delta will show differences in a directory entry's size as well as subdirectories and files added for directories.
+3. Compare & Diff: Select your target drive to scan and then select your snapshot file to compare against. Then click the compare snapshots checkbox and click scan. Delta will show differences in a directory entry's size as well as subdirectories and subfiles added for directories.
 
-Green numbers mean the directory entry in the current scan has less bytes than the same folder in previous scan. Red numbers means the directory entry in the current scan has more bytes than the same folder in the previous scan. Grey numbers mean there was no change in size.
+Green numbers mean the directory entry in the current scan has fewer bytes than the same folder in the previous scan. Red numbers mean the directory entry in the current scan has more bytes than the same folder in the previous scan. Grey numbers mean there was no change in size.
 
 ## Features
 
@@ -50,7 +51,7 @@ Green numbers mean the directory entry in the current scan has less bytes than t
 ## Tech stack
 
 - **Core:** [Tauri](https://tauri.app/) (Rust)
-- **Frontend:** React + Vite
+- **Frontend:** React
 - **Persistent Storage:** SQLite
 
 ## Roadmap & Known Limitations
