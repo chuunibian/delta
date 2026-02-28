@@ -8,12 +8,6 @@ pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
     let snapshot_folder = local_appdata_path.join("tempsnapshot");
     let mut error_flag = false;
 
-    if !snapshot_folder.exists() {
-        return Err(AppError::StartupError(
-            "Local storage snapshot folder does not exist.".to_string(),
-        ));
-    }
-
     let entries = fs::read_dir(snapshot_folder)?;
 
     for entry_result in entries {
