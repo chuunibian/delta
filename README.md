@@ -7,17 +7,22 @@ A disk space analyzer built with Rust and Tauri. Instead of just showing you wha
 
 ![Delta Project GIF](images/deltademo.gif)
 
-You can also view the high-quality [Demo Video](images/demo-delta.mp4).
+You can also view the high-quality demo video below:
+
+<video src="images/demo-delta.mp4" controls="controls" muted="muted" width="100%"></video>
 
 ## How to Use Delta
 
-1. Run a Baseline Scan: If you are a new user to the software then there will not be any previously saved snapshots. Select your target drive from the dropdown menu and select the save snapshot to initiate a scan to view your current storage distribution and save the scan as a snapshot. Snapshots are automatically tagged with their disk name and capture date.
+1. **Run a Baseline Scan:** If you are a new user, there will not be any previously saved snapshots. Select your target drive from the dropdown menu and select "Save snapshot" to initiate a scan. This will display your current storage distribution and save the scan as a snapshot. Snapshots are automatically tagged with their disk name and capture date.
 
-2. Waiting Time: Wait a few days or weeks (or any unit of time).
+2. **Waiting Time:** Wait a few days, weeks, or any desired unit of time.
 
-3. Compare & Diff: Select your target drive to scan and then select your snapshot file to compare against. Then click the compare snapshots checkbox and click scan. Delta will show differences in a directory entry's size as well as subdirectories and files added for directories.
+3. **Compare & Diff:** Select your target drive to scan, then select your previously saved snapshot file to compare against. Check the "Compare snapshots" box and click "Scan". Delta will display the size differences for directory entries, as well as any new subdirectories and files.
 
-Green numbers mean the directory entry in the current scan has fewer bytes than the same folder in the previous scan. Red numbers mean the directory entry in the current scan has more bytes than the same folder in the previous scan. Grey numbers mean there was no change in size.
+**Understanding the Results:**
+- **Green numbers:** The directory/file has **fewer bytes** than in the previous scan.
+- **Red numbers:** The directory/file has **more bytes** than in the previous scan.
+- **Grey numbers:** There was **no change** in size.
 
 ## Features
 
