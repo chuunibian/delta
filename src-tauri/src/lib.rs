@@ -28,7 +28,10 @@ pub fn run() {
                 Err(_) => {
                     app.dialog()
                     .message(
-                        "An error has occured during app startup: The app cannot get it's local appdata path")
+                        "Fatal Error: An error has occured during app startup. 
+                        The app cannot get it's local appdata path. 
+                        This is likely due to a corrupted OS environment or missing environment variables. 
+                        The application cannot function without this path and will now exit.")
                     .kind(MessageDialogKind::Error)
                     .title("Startup Error")
                     .blocking_show();
