@@ -38,6 +38,10 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 2. Download latest `.msi` or `.exe` or matching linux installation file.
 3. Run the installer
 
+> This application is not digitally signed. 
+> * **Windows:** You may see a Windows protected your PC (SmartScreen) popup. Click **More info** > **Run anyway**.
+> * **Linux:** Your package manager may warn you about an **unsigned package**.
+
 ### Build From Source
 
 1. Have **Rust** and **Node.js** installed.
