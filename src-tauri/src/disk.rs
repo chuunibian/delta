@@ -9,7 +9,7 @@ use twox_hash::XxHash64;
 use walkdir::WalkDir;
 
 use crate::error::AppError;
-use crate::model::{self, BackendState, Init_Disk};
+use crate::model::{self, BackendState, InitDisk};
 
 fn hash_path_id(path: &str) -> u64 {
     let seed = 420;
@@ -18,7 +18,7 @@ fn hash_path_id(path: &str) -> u64 {
 }
 
 #[tauri::command]
-pub fn retreive_disks() -> Result<Vec<Init_Disk>, AppError> {
+pub fn retreive_disks() -> Result<Vec<InitDisk>, AppError> {
     let disks = Disks::new_with_refreshed_list();
     let mut disk_list = Vec::new();
 
@@ -32,7 +32,7 @@ pub fn retreive_disks() -> Result<Vec<Init_Disk>, AppError> {
         let total_size = format_size(disk.total_space(), DECIMAL);
         let size_remaining = format_size(disk.available_space(), DECIMAL);
 
-        disk_list.push(Init_Disk {
+        disk_list.push(InitDisk {
             name: disk.mount_point().to_string_lossy().to_string(),
             desc: format!(
                 "{} free {} total {}",
@@ -122,7 +122,7 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
         .same_file_system(true)
         .follow_links(false);
 
-    let mut current_dir_size: u64 = 0;
+
 
     let mut test_entry_progress_counter: u64 = 0;
 
@@ -156,7 +156,7 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
                 }
             } else if entry.file_type().is_dir() {
                 if let Ok(directory_meta) = entry.metadata() {
-                    current_dir_size = 0;
+                    let mut current_dir_size: u64 = 0;
 
                     if let Ok(temp_fs_read_dir) = fs::read_dir(entry.path().to_path_buf()) {
                         let mut new_dir_node = model::Dir {
