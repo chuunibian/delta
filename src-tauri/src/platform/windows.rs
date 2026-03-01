@@ -16,7 +16,7 @@ pub fn appdata_folder_check(local_appdata_path: &Path) -> Result<(), AppError> {
         let entry_path_string = entry.file_name().to_string_lossy().to_string();
         let file_name_parts: Vec<&str> = entry_path_string.split('_').collect();
 
-        let temp_valid_flag = if let [drive, date, size] = file_name_parts.as_slice() {
+        let temp_valid_flag = if let [drive, date, _size] = file_name_parts.as_slice() {
             drive.len() == 1 && date.len() == 12
         } else {
             false

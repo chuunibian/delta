@@ -78,6 +78,9 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 **Data Visualization**
 - **Historical Trend Graphs:** Implement a third UI card dedicated to plotting the historical size changes of a specifically selected file or directory across all available snapshots over time.
 
+**Specific Path Scans**
+- **Specific Paths:** Allow users to scan and save specific paths as snapshots and compare later. Currently that feature is disabled.
+
 ## Contributing & Feedback
 
 Contributions, issues, feedback, and feature requests are highly welcome. For bug reports, please open an issue on GitHub. For feature requests, please open a discussion on GitHub. For contributions, please open a pull request.

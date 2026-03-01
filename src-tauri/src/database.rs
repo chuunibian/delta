@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::fs;
 
 use crate::error::AppError;
-use crate::model::{self, BackendState, Node, Snapshot_db_meta};
+use crate::model::{self, BackendState, Node, SnapshotDbMeta};
 use crate::platform::clean_disk_name;
 
 pub struct SnapshotRecord {
@@ -77,7 +77,7 @@ pub fn query_children_stats_from_parent_id(
 
     let parent_id = parent_dir.id;
 
-    let mut conn = Connection::open(&prev_data_db_path)?;
+    let conn = Connection::open(&prev_data_db_path)?;
     let mut stmt = conn.prepare("SELECT * FROM snapshot WHERE parent_id == ?")?;
     let mut rows = stmt.query([parent_id as i64])?; // rows match to snapshot record
 
@@ -210,7 +210,7 @@ pub async fn write_current_tree(
 #[tauri::command]
 pub fn get_local_snapshot_files(
     state: tauri::State<'_, BackendState>,
-) -> Result<Vec<Snapshot_db_meta>, AppError> {
+) -> Result<Vec<SnapshotDbMeta>, AppError> {
     let temp_data_db_path = state
         .local_appdata_path
         .as_ref()
@@ -240,7 +240,7 @@ pub fn get_local_snapshot_files(
 }
 
 // For this func it should given a path name return the snapshot db file object
-fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, AppError> {
+fn parse_snapshot_file_name(path: &String) -> Result<SnapshotDbMeta, AppError> {
     let path_segmented: Vec<&str> = path.split("_").collect();
 
     if path_segmented.len() != 3 {
@@ -251,7 +251,7 @@ fn parse_snapshot_file_name(path: &String) -> Result<Snapshot_db_meta, AppError>
 
     if let [drive_name, date, size] = path_segmented.as_slice() {
         // naivedatetime parse from str should turn somethin like 20261220HHMM to a string
-        let snapshot_meta = Snapshot_db_meta {
+        let snapshot_meta = SnapshotDbMeta {
             drive_letter: drive_name.to_string(),
             date_time: NaiveDateTime::parse_from_str(date, "%Y%m%d%H%M")?.to_string(),
             date_sort_key: date.parse::<u64>()?,

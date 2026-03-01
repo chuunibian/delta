@@ -80,9 +80,9 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
     const selectedIndex = Object.keys(rowSelection)[0] // Get "0"
     const selectedData = snapshotFiles[parseInt(selectedIndex)]
 
-    // TODO maybe reset the global store rep if currently no row selected
-
-    if (!selectedData) { // current workaround for this useafect not having correct data on startup (since nothing selected)
+    if (!selectedData) {
+      setSnapshotFile("") // reset these on mount
+      setSnapshotFlag(false)
       return;
     }
 
@@ -129,6 +129,7 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
         </Card>
 
 
+
         {/* disk scan card */}
         <Card className='w-[28rem] p-7'>
           <CardHeader>
@@ -164,6 +165,15 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
                   </p>
                 </div>
               </div>
+              <div className="flex items-start gap-3">
+                <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*/ />
+                <div className="grid gap-2">
+                  <Label htmlFor="terms-2">Save Snapshot</Label>
+                  <p className="text-muted-foreground text-sm">
+                    Save current scan into new snapshot file
+                  </p>
+                </div>
+              </div>
 
             </div>
           </CardContent>
@@ -174,6 +184,9 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
             </div>
           </CardFooter>
         </Card>
+
+        {/* Notifications card */}
+        {/* <SplashNotifications></SplashNotifications> */}
       </div>
     </div>
   )

@@ -15,13 +15,13 @@ pub struct BackendState {
 // ^ for that above consider not using a mutex and something else
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Init_Disk {
+pub struct InitDisk {
     pub name: String,
     pub desc: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Snapshot_db_meta {
+pub struct SnapshotDbMeta {
     pub drive_letter: String,
     pub date_time: String,
     pub date_sort_key: u64,
@@ -131,13 +131,7 @@ pub struct FileViewMeta {
     pub modified: SystemTime,
 }
 
-pub struct AppHealth {}
 
-impl Init_Disk {
-    pub fn new(name: String, desc: String) -> Self {
-        Self { name, desc }
-    }
-}
 
 impl Dir {
     pub fn to_dir_view_unexpanded_no_diff(&self) -> DirView {
