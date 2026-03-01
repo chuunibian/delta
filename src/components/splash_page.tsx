@@ -30,8 +30,6 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
   const [selectedDisk, setSelectedDisk] = useState<string>("");
 
-  // const [snapshotFiles, setSnapshotFiles] = useState<SnapshotFile[]>([]);
-
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const [saveCurrentSnapshotFlag, setSaveCurrentSnapshotFlag] = useState<boolean>(true);
@@ -117,8 +115,6 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
 
   return (
-    // <div className="flex min-h-screen items-center justify-center bg-stone-800 p-10 gap-6">
-    // <div className="flex min-h-screen flex-wrap items-center justify-center bg-stone-800 p-10 gap-6">
     <div className="flex flex-col h-screen bg-stone-800">
       <TopBar></TopBar>
 
@@ -127,12 +123,11 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
         {/* Temp image */}
         <img src={DeltaLogo} alt="This the App Logo" className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9' />
 
-        {/* <TopBar></TopBar> */}
         {/* Test data table for snapshots, datatable should be generic */}
         <Card className='p-3 min-w-[350px]'>
           <DataTable columns={columns} data={snapshotFiles} rowSelection={rowSelection} setRowSelection={setRowSelection} ></DataTable>
-          {/* <p>{snapshotFile}</p> */}
         </Card>
+
 
 
         {/* disk scan card */}
@@ -170,7 +165,6 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
                   </p>
                 </div>
               </div>
-
             </div>
           </CardContent>
           <CardFooter>

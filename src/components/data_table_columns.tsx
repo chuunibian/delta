@@ -1,26 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "./ui/checkbox"
 import { formatBytes, formatDateTime } from "@/lib/utils"
-/*
-  current only have drive letter and date and also a date numerical item
-  > Instance of data -> {"driveLetter": letter, "date": date, "date_key": key}
 
-*/
-/*
-  tan stack table row selection:
-
-  internally the library manages the row selection state but you are allowed to 
-  manage state youself using onRowSelectionChange
-
-  enableRowSelection accepts a boolean
-  row.getCanSelect() in col to see if it can be selected
-  or use row.getIsSelected() for the checked= html porp for Checkbox
-
-  then fo ronchange call the state change
-
-  for the UI side get the state of the row like get is selected
-
-*/
 export type SnapshotFile = {
   drive_letter: string
   date_time: string,
