@@ -165,16 +165,6 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*/ />
-                <div className="grid gap-2">
-                  <Label htmlFor="terms-2">Save Snapshot</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Save current scan into new snapshot file
-                  </p>
-                </div>
-              </div>
-
             </div>
           </CardContent>
           <CardFooter>
