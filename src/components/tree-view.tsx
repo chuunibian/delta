@@ -112,6 +112,7 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
       onClick={() => {
         updateCurrentClickedOverview(node.data);
         updateCurrentDirEntryHistory(userStore.getState().root.path, node.data.path)
+
         if (!node.isOpen && !node.isLeaf && (!node.data.children || node.data.children.length === 0)) {
           addNewDirView(node.data, parsePathToSegment(node.data.path));
         }
@@ -120,7 +121,6 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
       onMouseEnter={
         () => {
           changeCurrentPath(node.data.path)
-          // New
           changeCurrentEntryDetails(node.data.numsubdir, node.data.numsubfiles)
         }
       }
@@ -168,15 +168,6 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
 
         <div className={`${COL_WIDTHS.diff} flex-shrink-0 flex justify-center items-center px-2 gap-2`}>
           <Progress value={ratioValue} className="h-2 flex-1 bg-muted [&>div]:bg-yellow-200"></Progress>
-
-          {/* {node.data.diff?.new_flag ? (
-            <div className="h-2 w-2 shrink-0 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.6)]"/>
-           ) :
-           (
-            <div 
-              className="h-2 w-2 shrink-0 rounded-full border border-gray-500 bg-transparent"  
-            />
-           )} */}
 
           <div className={`h-2 w-2 shrink-0 rounded-full border-gray-500 ${status_field_color}`} />
 

@@ -4,6 +4,14 @@ import { BackendError, CurrentEntryDetails, DirView, DirViewChildren, TreeDataNo
 import { appendPaths } from "@/lib/utils";
 import { SnapshotFile } from "./data_table_columns";
 
+
+// caching ht for history graph making it a singleton for now
+let historyCache: Record<string, { timestamp: number; sizeBytes: number }[]> = {}
+// TODO cache clear helper
+export const clearHistoryCache = () => {
+  historyCache = {};
+};
+
 // To get the path we could traverse up the tree or we could store it as a field in the interface
 // the root is the global state, everything else is helper functions
 interface FrontEndFileSystemStore {
@@ -16,7 +24,7 @@ interface FrontEndFileSystemStore {
   addNewDirView: (currentTreeData: TreeDataNode, pathList: string[]) => void;
   changeCurrentOverviewNode: (currentTreeNode: TreeDataNode) => void;
   changeCurrentPath: (path: string) => void;
-  changeCurrentEntryDetails: (numsubdir: number, numsubfile: number) => void; // NEW can pass in more info if needed
+  changeCurrentEntryDetails: (numsubdir: number, numsubfile: number) => void;
   initDirData: (inital: DirView) => void;
   setSnapshotFlag: (flag: boolean) => void;
   setSelectedHistorySnapshotFile: (file: string) => void;
@@ -41,25 +49,34 @@ interface DirEntryHistoryStore {
 
 export const useDirEntryHistoryStore = create<DirEntryHistoryStore>((set) => ({
   currentDirEntryHistory: [],
+  historyCache: {},
+
   queryDirEntryHistory: async (rootPath, absolutePath) => {
-    try {
-      const result: [string, number][] = await invoke(
-        'get_path_historical_data',
-        { rootPath, absolutePath }
-      );
 
-      const formattedHistory = result.map(([dateStr, sizeBytes]) => ({
-        timestamp: new Date(dateStr).getTime(),
-        sizeBytes,
-      }));
+    if (historyCache[absolutePath]) {
+      set({ currentDirEntryHistory: historyCache[absolutePath] });
+    } else {
+      try {
+        const result: [string, number][] = await invoke(
+          'get_path_historical_data',
+          { rootPath, absolutePath }
+        );
 
-      set({ currentDirEntryHistory: formattedHistory });
-    } catch (error) {
-      console.error(error);
-      useErrorStore.getState().setCurrentBackendError(error as BackendError);
-      set({ currentDirEntryHistory: [] });
+        const formattedHistory = result.map(([dateStr, sizeBytes]) => ({
+          timestamp: new Date(dateStr).getTime(),
+          sizeBytes,
+        }));
+
+        set({ currentDirEntryHistory: formattedHistory });
+        historyCache[absolutePath] = formattedHistory
+      } catch (error) {
+        console.error(error);
+        useErrorStore.getState().setCurrentBackendError(error as BackendError);
+        set({ currentDirEntryHistory: [] });
+      }
     }
   },
+
   setCurrentDirEntryHistory: (newHistory) => set({ currentDirEntryHistory: newHistory }),
 }));
 
