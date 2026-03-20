@@ -1,7 +1,7 @@
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { formatBytes } from "@/lib/utils"
-import { useDirEntryHistoryStore } from "./store"
+import { useConfigurationStore, useDirEntryHistoryStore } from "./store"
 
 const chartConfig = {
   size: {
@@ -15,11 +15,20 @@ import { Card } from "@/components/ui/card"
 export function SpaceHistoryChart() {
   const chartData = useDirEntryHistoryStore((s) => s.currentDirEntryHistory);
 
+  const showHistoryFlag = useConfigurationStore((state) => state.ShowHistory);
+
   const renderContent = () => {
+    if (!showHistoryFlag) {
+      return (
+        <div className="flex items-center justify-center h-full min-h-[200px] text-muted-foreground text-sm">
+          History graph disabled.
+        </div>
+      )
+    }
     if (!chartData || chartData.length === 0) {
       return (
         <div className="flex items-center justify-center h-full min-h-[200px] text-muted-foreground text-sm">
-          Select a directory to view history
+          Select a directory to view history.
         </div>
       );
     }
@@ -54,6 +63,8 @@ export function SpaceHistoryChart() {
           />
 
           <YAxis
+            width={75}
+            tickMargin={8}
             tickFormatter={(v) => formatBytes(v)}
             tickLine={false}
             axisLine={false}

@@ -35,7 +35,6 @@ interface FrontEndSnapshotStore {
   setPreviousSnapshots: (snapshotFileList: SnapshotFile[]) => void; // need spread to force rerender
 }
 
-
 interface ErrorStore {
   currentBackendErrors: BackendError[];
   setCurrentBackendError: (newError: BackendError) => void; // send current backend error based on a new 
@@ -48,13 +47,35 @@ interface DirEntryHistoryStore {
   setCurrentDirEntryHistory: (newHistory: { timestamp: number; sizeBytes: number }[]) => void;
 }
 
+interface FrontEndConfigurationStore {
+  ShowHistory: boolean;
+  setShowHistory: (flag: boolean) => void;
+  // If ever need more configs add here
+  // saving configs to persistent config file in future also 
+}
+
+export const useConfigurationStore = create<FrontEndConfigurationStore>((set) => ({
+  ShowHistory: true,
+  setShowHistory: (flag) => {
+    set({ ShowHistory: flag })
+  }
+}))
+
 export const useDirEntryHistoryStore = create<DirEntryHistoryStore>((set, get) => ({
   currentDirEntryHistory: [],
   activeHistoryPath: null,
 
   queryDirEntryHistory: async (rootPath, absolutePath) => {
 
-    set({ activeHistoryPath: absolutePath }); // mark curr as the current active, this line is sync with onClick call so order is ensured
+    // mark curr as the current active, this line is sync with onClick call so order is ensured
+    set({ activeHistoryPath: absolutePath });
+
+    // Check if history flag disabled
+    const showHistoryFlag = useConfigurationStore.getState().ShowHistory;
+
+    if (!showHistoryFlag) {
+      return;
+    }
 
     if (historyCache[absolutePath]) {
       set({ currentDirEntryHistory: historyCache[absolutePath] });

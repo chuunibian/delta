@@ -29,6 +29,9 @@ import {
 } from "./ui/alert-dialog"
 import { Trash2, Settings } from "lucide-react"
 import { snapshotStore, useErrorStore } from "./store"
+import { HistoryToggle } from "./HistoryToggle"
+import { Separator } from '@/components/ui/separator'
+
 
 export function SettingsPage() {
 
@@ -46,14 +49,14 @@ export function SettingsPage() {
       try {
         const temp2: SnapshotFile[] = await invoke('get_local_snapshot_files')
         setSnapshotFiles(temp2)
-      } catch(err) {
+      } catch (err) {
         setCurrentBackendError(err) // should be a BackendError Type
         console.log("error fetch file disk data") // temp
       }
 
     }
     fetchFiles();
-  }, []); 
+  }, []);
 
   useEffect(() => {
     const selectedIndex = Object.keys(rowSelection)[0];
@@ -89,15 +92,23 @@ export function SettingsPage() {
           <Settings></Settings>
         </Button>
       </SheetTrigger>
-      
+
       <SheetContent className="w-full sm:max-w-xl flex flex-col h-full p-0 gap-0">
         <SheetHeader className="p-6 border-b bg-background z-10">
           <SheetTitle>Settings</SheetTitle>
           <SheetDescription>
-            Manage your local snapshots and configuration.
+            Manage local snapshots and configuration.
           </SheetDescription>
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-900/20">
+        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-900/20 
+          [&::-webkit-scrollbar]:w-2
+          [&::-webkit-scrollbar]:h-2
+          [&::-webkit-scrollbar-track]:bg-transparent
+          [&::-webkit-scrollbar-thumb]:bg-gray-300
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+          hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
+          dark:hover:[&::-webkit-scrollbar-thumb]:bg-neutral-400">
           <div className="space-y-6">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
@@ -114,19 +125,19 @@ export function SettingsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border bg-background">
-                    <DataTable 
-                      columns={columns} 
-                      data={snapshotFiles} 
-                      rowSelection={rowSelection} 
-                      setRowSelection={setRowSelection} 
+                    <DataTable
+                      columns={columns}
+                      data={snapshotFiles}
+                      rowSelection={rowSelection}
+                      setRowSelection={setRowSelection}
                     />
                   </div>
                 </CardContent>
                 <CardFooter className="p-4 flex justify-end">
-                  
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button 
+                      <Button
                         size="sm"
                         disabled={selectedRowFileName === ""}
                         className="gap-2"
@@ -144,7 +155,7 @@ export function SettingsPage() {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction 
+                        <AlertDialogAction
                           className="bg-red-600 hover:bg-red-900"
                           onClick={() => handle_file_delete()}
                         >
@@ -155,6 +166,17 @@ export function SettingsPage() {
                   </AlertDialog>
                 </CardFooter>
               </Card>
+
+              <Separator></Separator>
+
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                  Configurations
+                </h3>
+              </div>
+
+              <HistoryToggle></HistoryToggle>
+
             </div>
           </div>
         </div>
