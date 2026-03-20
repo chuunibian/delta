@@ -66,7 +66,6 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 
 **Performance & Architecture**
 - **Scan Optimization:** Transition away from the current recursive scanning algorithm to minimize system calls and significantly improve file tree traversal speeds.
-- **Database Connection Pooling:** Implement connection pooling for SQLite.
 - **Memory Management:** Refactor internal data structures to further reduce the application's memory footprint during massive disk scans.
 
 **Diffing Engine Enhancements**
@@ -76,9 +75,10 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 - **Robust Disk Identification (Windows):** Migrate away from categorizing snapshots by drive letter aliases (e.g., `C:\`, `D:\`), as these can be reassigned by the OS. Transition to using persistent, OS-native volume identifiers to ensure snapshots remain accurately linked to their physical drives over time.
 
 **Data Visualization**
-- **Historical Trend Graphs:** Implement a third UI card dedicated to plotting the historical size changes of a specifically selected file or directory across all available snapshots over time.
+- **Historical Trend Graphs:** [WIP] Implement a third UI card dedicated to plotting the historical size changes of a specifically selected file or directory across all available snapshots over time.
 - **Largest Files Table:** Implement a table showing largest files.
 - **TreeMap** Implement a tree map similar to how classic disk space analyzers have with the file tree changing with the tree map.
+- **FileType** Implement basic radar graph showing distrib of top k file types on disk.
 
 **Specific Path Scans**
 - **Specific Paths:** Allow users to scan and save specific paths as snapshots and compare later. Currently that feature is disabled.
