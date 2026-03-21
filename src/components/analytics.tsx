@@ -3,6 +3,8 @@ import TopBar from "./top-bar";
 import TestFileTreeSecond from "./tree-view";
 import Overview from "./overview-tab";
 import { SpaceHistoryChart } from "./SpaceHistoryChart";
+import { useEffect } from "react";
+import { clearHistoryCache } from "./store";
 
 interface AnalyticsProps {
   setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,6 +13,13 @@ interface AnalyticsProps {
 const Analytics: React.FC<AnalyticsProps> = ({ setWhichField }) => {
   // For shrinking window size have it at h-screen and overflow hidden since the main container
   // overflow-hidden will prevent parent container scroll bar
+
+  useEffect(() => {
+    // for clearing history cache
+    return () => {
+      clearHistoryCache();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-stone-800">

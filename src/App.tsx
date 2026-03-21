@@ -9,12 +9,7 @@ const App = () => {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      {/* <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center backdrop-blur-sm"> */}
-      {/* <div className="fixed inset-0 z-51 flex flex-col items-center justify-center"> */}
-        {/* <SplashPage setWhichField={setWhichField}></SplashPage> */}
-      {/* </div> */}
-      {/* <FullScreenSkeleton></FullScreenSkeleton> */}
-      {/* <Analytics></Analytics> */}
+
       {whichField ? (
         <SplashPage setWhichField={setWhichField}></SplashPage>
       ) : (
