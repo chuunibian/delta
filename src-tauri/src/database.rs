@@ -317,8 +317,58 @@ pub fn delete_snapshot_file(
     Ok(true)
 }
 
-// TODO For this func since historical data is currently scaled only by day (design choice)
-// need to dedup same day scans by taking the highest one before it goes to fe
+// pub fn get_path_historical_data(
+//     root_path: String,
+//     absolute_path: String,
+//     state: tauri::State<'_, BackendState>,
+// ) -> Result<Vec<(String, i64)>, AppError> {
+//     let prev_data_db_path: std::path::PathBuf = state
+//         .local_appdata_path
+//         .as_ref()
+//         .unwrap()
+//         .join("tempsnapshot");
+
+//     let cleaned_name = clean_disk_name(&root_path)?;
+//     let id = hash_path_id(&absolute_path);
+
+//     let mut data_vec: Vec<(String, i64)> = Vec::new();
+
+//     for entry in fs::read_dir(&prev_data_db_path)? {
+//         let entry_result = entry?;
+//         let path = entry_result.path(); // abs path of each db file
+//         let file_path_name = path
+//             .file_stem()
+//             .ok_or(AppError::CustomError(
+//                 "Path failed to get file stem".to_string(),
+//             ))?
+//             .to_string_lossy()
+//             .to_string();
+
+//         let path_segmented: Vec<&str> = file_path_name.split('_').collect();
+
+//         if let [drive_name, date, size] = path_segmented.as_slice() {
+//             if *drive_name == cleaned_name {
+//                 if let Ok(temp_states) = query_stats_from_id_utility(id, &path) {
+//                     let parsed_date = NaiveDateTime::parse_from_str(date, "%Y%m%d%H%M")?;
+//                     data_vec.push((
+//                         // 2026-03-18 format
+//                         parsed_date.format("%Y-%m-%d").to_string(),
+//                         temp_states.size,
+//                     ));
+//                 }
+//             }
+//         } else {
+//             return Err(AppError::GeneralLogicalErr(
+//                 "Cannot parse malformed snapshot filename. Restart application".to_string(),
+//             ));
+//         }
+//     }
+
+//     data_vec.sort_by_key(|tuple| tuple.0.clone());
+
+//     return Ok(data_vec);
+// }
+
 #[tauri::command]
 pub fn get_path_historical_data(
     root_path: String,
@@ -331,7 +381,6 @@ pub fn get_path_historical_data(
         .unwrap()
         .join("tempsnapshot");
 
-    let cleaned_name = clean_disk_name(&root_path)?;
     let id = hash_path_id(&absolute_path);
 
     let mut data_vec: Vec<(String, i64)> = Vec::new();
@@ -349,16 +398,14 @@ pub fn get_path_historical_data(
 
         let path_segmented: Vec<&str> = file_path_name.split('_').collect();
 
-        if let [drive_name, date, size] = path_segmented.as_slice() {
-            if *drive_name == cleaned_name {
-                if let Ok(temp_states) = query_stats_from_id_utility(id, &path) {
-                    let parsed_date = NaiveDateTime::parse_from_str(date, "%Y%m%d%H%M")?;
-                    data_vec.push((
-                        // 2026-03-18 format
-                        parsed_date.format("%Y-%m-%d").to_string(),
-                        temp_states.size,
-                    ));
-                }
+        if let [_drive_name, date, _size] = path_segmented.as_slice() {
+            if let Ok(temp_states) = query_stats_from_id_utility(id, &path) {
+                let parsed_date = NaiveDateTime::parse_from_str(date, "%Y%m%d%H%M")?;
+                data_vec.push((
+                    // 2026-03-18 format
+                    parsed_date.format("%Y-%m-%d").to_string(),
+                    temp_states.size,
+                ));
             }
         } else {
             return Err(AppError::GeneralLogicalErr(

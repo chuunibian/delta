@@ -81,7 +81,6 @@ export function SettingsPage() {
       setRowSelection({})
     } catch (err) {
       setCurrentBackendError(err)
-      console.log("something failed")
     }
   }
 
