@@ -412,6 +412,7 @@ pub fn get_path_historical_data(
                 ));
             }
         } else {
+            // Put your error handling back here for malformed .db filenames
             return Err(AppError::GeneralLogicalErr(
                 "Cannot parse malformed snapshot filename. Restart application".to_string(),
             ));
