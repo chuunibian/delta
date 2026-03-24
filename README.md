@@ -19,6 +19,8 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 
 3. **Compare & Diff:** Select your target drive to scan, then select your previously saved snapshot file to compare against. Check the "Compare snapshots" box and click "Scan". Delta will display the size differences for directory entries, as well as any new subdirectories and files.
 
+> **Note:** Delta does not run autonomously in the background. It relies entirely on the user to manually trigger and save scans to build data for snapshot history. For new app installations there will not be much historical data.
+
 **Understanding the Results:**
 - **Green numbers:** The directory/file has **fewer bytes** than in the previous scan.
 - **Red numbers:** The directory/file has **more bytes** than in the previous scan.
@@ -26,7 +28,7 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 
 ## Features
 
-- **Scan Comparisons:** Save snapshots of your disk state and compare current scans to previous ones. Allows user to identify which folders have grown in size.
+- **Scan Comparisons:** Save snapshots of your disk state and compare current scans to previous ones. Allows user to identify which folders or files have grown in size.
 - **Local & Private:** Runs 100% offline. No telemetry, no cloud uploads. Data is stored 100% locally.
 - **Lightweight:** Built with Rust and Tauri for a lightweight install and run footprint.
 
@@ -75,16 +77,15 @@ https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
 - **Robust Disk Identification (Windows):** Migrate away from categorizing snapshots by drive letter aliases (e.g., `C:\`, `D:\`), as these can be reassigned by the OS. Transition to using persistent, OS-native volume identifiers to ensure snapshots remain accurately linked to their physical drives over time.
 
 **Data Visualization**
-- **Historical Trend Graphs:** [WIP] Implement a third UI card dedicated to plotting the historical size changes of a specifically selected file or directory across all available snapshots over time.
 - **Largest Files Table:** Implement a table showing largest files.
 - **TreeMap** Implement a tree map similar to how classic disk space analyzers have with the file tree changing with the tree map.
 - **FileType** Implement basic radar graph showing distrib of top k file types on disk.
 
-**Specific Path Scans**
-- **Specific Paths:** Allow users to scan and save specific paths as snapshots and compare later. Currently that feature is disabled.
-
 **Option To Preview Snapshots**
 - **Preview:** Allow user to load a snapshot and preview it as if it was just scanned.
+
+**Option To Export/Import Snapshots Into User Designated Space**
+- **Exporting:** Allow users to export all current snapshots to a user safe space. This can be used to archive scan data and import them in when more data points are needed. 
 
 ## Contributing & Feedback
 
