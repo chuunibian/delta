@@ -5,7 +5,7 @@
 
 A disk space analyzer built with Rust and Tauri. Instead of just showing you what is on your drive right now, Delta lets you save snapshots of your disk state and compare them over time to see exactly which files and folders are eating up your space.
 
-![Delta Project GIF](images/deltademo.gif)
+![Delta Project GIF](images/deltademo2.gif)
 
 You can also view the high-quality demo video below:
 
