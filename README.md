@@ -9,7 +9,7 @@ A disk space analyzer built with Rust and Tauri. Instead of just showing you wha
 
 You can also view the high-quality demo video below:
 
-https://github.com/user-attachments/assets/bde3a976-603c-4fb8-afea-cb32681cb6f3
+https://github.com/user-attachments/assets/10722d41-1676-4030-86d9-0173415e87d5
 
 ## How to Use Delta
 
