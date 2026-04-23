@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Delta",
+    "logoAlt": "Delta 应用图标"
+  },
+  "common": {
+    "cancel": "取消",
+    "close": "关闭",
+    "copy": "复制",
+    "delete": "删除",
+    "loading": "加载中...",
+    "notAvailable": "不可用",
+    "reveal": "显示"
+  },
+  "scan": {
+    "tabs": {
+      "fullDisk": "整盘扫描",
+      "customPath": "自定义路径"
+    },
+    "title": "开始快照",
+    "fields": {
+      "disk": "磁盘",
+      "customPath": "自定义路径"
+    },
+    "placeholders": {
+      "selectDisk": "选择磁盘",
+      "customPath": "输入自定义路径..."
+    },
+    "actions": {
+      "scan": "扫描",
+      "browseFolder": "选择文件夹"
+    },
+    "options": {
+      "compareSnapshots": "对比快照",
+      "compareSnapshotsDescription": "将当前扫描结果与之前保存的快照进行对比",
+      "saveSnapshot": "保存快照",
+      "saveSnapshotDescription": "将当前扫描结果保存为新的快照文件"
+    },
+    "fallback": {
+      "unknownDisk": "未知",
+      "noDisksFound": "未找到磁盘"
+    }
+  },
+  "snapshot": {
+    "title": "本地快照",
+    "description": "选择下面的快照，将其从本地存储中删除。",
+    "empty": "没有快照文件。",
+    "columns": {
+      "driveName": "磁盘名称",
+      "date": "日期",
+      "size": "大小"
+    },
+    "deleteSelected": "删除所选",
+    "deleteTitle": "删除快照？",
+    "deleteDescription": "这会从磁盘中永久删除所选快照。"
+  },
+  "settings": {
+    "title": "设置",
+    "description": "管理本地快照和应用配置。",
+    "dataManagement": "数据管理",
+    "configurations": "配置",
+    "language": "语言",
+    "languageDescription": "选择应用界面显示语言。",
+    "historyGraph": "历史图表",
+    "historyGraphDescription": "查看目录条目时启用历史大小图表。"
+  },
+  "tree": {
+    "headers": {
+      "name": "名称",
+      "size": "大小",
+      "previous": "之前",
+      "change": "变化",
+      "flag": "标记"
+    }
+  },
+  "overview": {
+    "type": {
+      "directory": "目录",
+      "file": "文件"
+    },
+    "metrics": {
+      "size": "大小",
+      "previousSize": "之前大小",
+      "sizeChange": "大小变化",
+      "subdirs": "子目录",
+      "previousSubdirs": "之前子目录",
+      "subdirChange": "子目录变化",
+      "files": "文件",
+      "previousFiles": "之前文件",
+      "filesChange": "文件变化"
+    },
+    "dates": {
+      "created": "创建时间",
+      "modified": "修改时间"
+    }
+  },
+  "history": {
+    "chartLabel": "大小",
+    "disabled": "历史图表已关闭。",
+    "empty": "选择一个目录或文件来查看历史记录。"
+  },
+  "notifications": {
+    "title": "通知",
+    "toggle": "打开通知",
+    "errorCode": "错误：{{code}}"
+  },
+  "topBar": {
+    "subdir": "子目录",
+    "subfiles": "子文件"
+  }
+}

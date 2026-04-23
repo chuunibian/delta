@@ -15,11 +15,14 @@ import { Button } from "./ui/button";
 
 import { openPath, openUrl, revealItemInDir } from '@tauri-apps/plugin-opener';
 import { formatBytes } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export default function Overview() {
+    const { t, i18n } = useTranslation()
 
 
     const currentNode = userStore((state) => state.currentEntryData)
+    const currentLocale = i18n.resolvedLanguage ?? i18n.language
 
     const current_size = currentNode.size
     const current_size_str = filesize(Number(current_size), { base: 2, standard: "jedec" }) as string
@@ -60,7 +63,7 @@ export default function Overview() {
                 <div className="flex gap-2 mt-3 items-center">
                     {currentNode.directory ? (<Folder className="h-4 w-4 text-muted-foreground"></Folder>) : (<File className="h-4 w-4 text-muted-foreground"></File>)}
                     <Badge variant="secondary" className="font-normal text-xs text-muted-foreground">
-                        {currentNode.directory ? 'Directory' : 'File'}
+                        {currentNode.directory ? t("overview.type.directory") : t("overview.type.file")}
                     </Badge>
                 </div>
             </div>
@@ -69,7 +72,7 @@ export default function Overview() {
             <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(3, minmax(120px, 1fr))' }}>
                 <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <HardDrive className="h-3 w-3" /> Size
+                        <HardDrive className="h-3 w-3" /> {t("overview.metrics.size")}
                     </span>
                     <p className="text-xs font-bold tracking-tight text-foreground">
                         {
@@ -79,7 +82,7 @@ export default function Overview() {
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 space-y-1">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <HardDrive className="h-3 w-3" /> Previous Size
+                        <HardDrive className="h-3 w-3" /> {t("overview.metrics.previousSize")}
                     </span>
                     <p className="text-xs font-bold tracking-tight text-foreground">
                         {
@@ -89,7 +92,7 @@ export default function Overview() {
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 space-y-1">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <HardDrive className="h-3 w-3" /> Size Change
+                        <HardDrive className="h-3 w-3" /> {t("overview.metrics.sizeChange")}
                     </span>
                     <p className="text-xs font-bold tracking-tight text-foreground">
                         {
@@ -101,7 +104,7 @@ export default function Overview() {
                 {/* Subdir row */}
                 <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <FolderTree className="h-3 w-3" /> Subdirs
+                        <FolderTree className="h-3 w-3" /> {t("overview.metrics.subdirs")}
                     </span>
                     <p className="text-xs font-medium pt-1">
                         {curr_folder_count_str}
@@ -109,7 +112,7 @@ export default function Overview() {
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 space-y-1">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <FolderTree className="h-3 w-3" /> Prev Subdirs
+                        <FolderTree className="h-3 w-3" /> {t("overview.metrics.previousSubdirs")}
                     </span>
                     <p className="text-xs font-medium pt-1">
                         {prev_folder_count_str}
@@ -117,7 +120,7 @@ export default function Overview() {
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 space-y-1">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <FolderTree className="h-3 w-3" /> Subdir Change
+                        <FolderTree className="h-3 w-3" /> {t("overview.metrics.subdirChange")}
                     </span>
                     <p className="text-sm font-medium pt-1">
                         {(currentNode.diff && currentNode.directory) ? (curr_folder_count - prev_folder_count) : ("-")}
@@ -129,7 +132,7 @@ export default function Overview() {
                 {/* File Row */}
                 <div className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <Folder className="h-3 w-3" /> Files
+                        <Folder className="h-3 w-3" /> {t("overview.metrics.files")}
                     </span>
                     <p className="text-xs font-medium pt-1">
                         {curr_file_count_str}
@@ -137,7 +140,7 @@ export default function Overview() {
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 space-y-1">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <Folder className="h-3 w-3" /> Prev Files
+                        <Folder className="h-3 w-3" /> {t("overview.metrics.previousFiles")}
                     </span>
                     <p className="text-xs font-medium pt-1">
                         {prev_file_count_str}
@@ -145,7 +148,7 @@ export default function Overview() {
                 </div>
                 <div className="p-3 rounded-lg bg-muted/40 space-y-1">
                     <span className="text-xs text-muted-foreground flex items-center gap-1.5 uppercase font-bold">
-                        <Folder className="h-3 w-3" /> Files Change
+                        <Folder className="h-3 w-3" /> {t("overview.metrics.filesChange")}
                     </span>
                     <p className="text-sm font-medium pt-1">
                         {(currentNode.diff && currentNode.directory) ? (curr_file_count - prev_file_count) : ("-")}
@@ -157,14 +160,14 @@ export default function Overview() {
             <div className="flex flex-wrap items-center gap-2 w-full">
                 <div className="flex flex-1 min-w-0 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
                     <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="font-medium text-gray-300">{currentNode.created?.toLocaleDateString() || "N/A"}</span>
-                    <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Created</span>
+                    <span className="font-medium text-gray-300">{currentNode.created?.toLocaleDateString(currentLocale) || t("common.notAvailable")}</span>
+                    <span className="text-sm text-muted-foreground border-l pl-2 ml-1">{t("overview.dates.created")}</span>
                 </div>
 
                 <div className="flex flex-1 min-w-0 items-center gap-2 px-3 py-1.5 rounded-md border bg-card text-card-foreground shadow-sm text-sm">
                     <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="font-medium text-gray-300">{currentNode.modified?.toLocaleDateString() || "N/A"}</span>
-                    <span className="text-sm text-muted-foreground border-l pl-2 ml-1">Modified</span>
+                    <span className="font-medium text-gray-300">{currentNode.modified?.toLocaleDateString(currentLocale) || t("common.notAvailable")}</span>
+                    <span className="text-sm text-muted-foreground border-l pl-2 ml-1">{t("overview.dates.modified")}</span>
                 </div>
             </div>
 
@@ -176,10 +179,10 @@ export default function Overview() {
 
                     <Button className="absolute bottom-1 right-1 h-3 px-2 text-[10px] " variant="destructive" onClick={
                         () => { test_reveal_opener(currentNode.path) }
-                    }>Reveal</Button>
+                    }>{t("common.reveal")}</Button>
                     <Button className="absolute bottom-1 right-13 h-3 px-2 text-[10px] " variant="outline" onClick={
                         () => { navigator.clipboard.writeText(currentNode.path) }
-                    }>Copy</Button>
+                    }>{t("common.copy")}</Button>
                 </div>
             </div>
         </div>

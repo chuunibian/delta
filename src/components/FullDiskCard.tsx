@@ -13,6 +13,7 @@ import { snapshotStore, useErrorStore, userStore } from './store'
 import Progress from './progress'
 
 import { DirView, InitDisk } from '@/types'
+import { useTranslation } from 'react-i18next'
 
 
 interface SplashPageProps {
@@ -21,6 +22,7 @@ interface SplashPageProps {
 
 
 const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
+    const { t } = useTranslation()
 
     const [disks, setDisks] = useState<InitDisk[]>([]);
 
@@ -46,12 +48,12 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
             } catch (err) {
                 setCurrentBackendError(err)
-                setDisks([{ name: "Unknown", desc: "No Disks Found" }])
+                setDisks([{ name: t("scan.fallback.unknownDisk"), desc: t("scan.fallback.noDisksFound") }])
             }
         }
 
         getDisks();
-    }, []);
+    }, [setCurrentBackendError, t]);
 
     const runScan = async (target: string) => {
         try {
@@ -81,11 +83,11 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
     return (
         <Card className='w-[28rem] p-7'>
             <CardHeader>
-                <CardTitle>Start Snapshot</CardTitle>
+                <CardTitle>{t("scan.title")}</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col space-y-5">
-                    <p className="text-sm leading-none font-medium">Disk</p>
+                    <p className="text-sm leading-none font-medium">{t("scan.fields.disk")}</p>
                     <DiskPath disks={disks} onValueChange={setSelectedDisk}></DiskPath>
 
                     <Separator></Separator>
@@ -94,9 +96,9 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
                     <div className="flex items-start gap-3">
                         <Checkbox id="terms-2" disabled={snapshotFile === ""} checked={snapshotFlag} onCheckedChange={setSnapshotFlag} />
                         <div className="grid gap-2">
-                            <Label htmlFor="terms-2">Compare Snapshots</Label>
+                            <Label htmlFor="terms-2">{t("scan.options.compareSnapshots")}</Label>
                             <p className="text-muted-foreground text-sm">
-                                Compare current scan with previous scanned snapshot
+                                {t("scan.options.compareSnapshotsDescription")}
                             </p>
                         </div>
                     </div>
@@ -106,9 +108,9 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
                     <div className="flex items-start gap-3">
                         <Checkbox id="terms-2" checked={saveCurrentSnapshotFlag} onCheckedChange={(checked) => setSaveCurrentSnapshotFlag(checked === true)} /*<-- Typescript type check shi*/ />
                         <div className="grid gap-2">
-                            <Label htmlFor="terms-2">Save Snapshot</Label>
+                            <Label htmlFor="terms-2">{t("scan.options.saveSnapshot")}</Label>
                             <p className="text-muted-foreground text-sm">
-                                Save current scan into new snapshot file
+                                {t("scan.options.saveSnapshotDescription")}
                             </p>
                         </div>
                     </div>
@@ -116,7 +118,7 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
             </CardContent>
             <CardFooter>
                 <div className="w-full flex flex-row items-center justify-center gap-3">
-                    <Button variant="outline" onClick={() => runScan(selectedDisk)}>Scan</Button>
+                    <Button variant="outline" onClick={() => runScan(selectedDisk)}>{t("scan.actions.scan")}</Button>
                     <Progress></Progress>
                 </div>
             </CardFooter>

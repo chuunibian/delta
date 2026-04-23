@@ -12,7 +12,7 @@ import { snapshotStore, useErrorStore, userStore } from './store'
 import { DataTable } from './data_table'
 import { SnapshotFile } from './data_table_columns'
 
-import { columns } from './data_table_columns'
+import { createSnapshotColumns } from './data_table_columns'
 import { RowSelectionState } from '@tanstack/react-table'
 import Progress from './progress'
 
@@ -20,12 +20,15 @@ import DeltaLogo from '../../src-tauri/icons/64x64.png'
 import { DirView, InitDisk } from '@/types'
 import TopBar from './top-bar'
 import { ScanTabs } from './ScanTabs'
+import { useTranslation } from 'react-i18next'
 
 interface SplashPageProps {
   setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
+  const { t, i18n } = useTranslation()
+  const columns = createSnapshotColumns(t, i18n.resolvedLanguage ?? i18n.language)
 
   // const [disks, setDisks] = useState<InitDisk[]>([]);
 
@@ -86,7 +89,7 @@ const SplashPage: React.FC<SplashPageProps> = ({ setWhichField }) => {
       <div className="flex flex-1 flex-wrap items-center justify-center gap-6 p-6 overflow-auto">
 
         {/* Temp image */}
-        <img src={DeltaLogo} alt="This the App Logo" className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9' />
+        <img src={DeltaLogo} alt={t("app.logoAlt")} className='transition-all duration-500 hover:scale-150 hover:rotate-180 opacity-90 hover:opacity-100 cursor-pointer fixed bottom-9 right-9' />
 
         {/* Test data table for snapshots, datatable should be generic */}
         <Card className='p-3 min-w-[350px]'>

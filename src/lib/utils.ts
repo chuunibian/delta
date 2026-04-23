@@ -19,8 +19,8 @@ export function parsePathToSegment(rootPath: string | undefined, fullPath: strin
   return segments.filter(s => s.length > 0);
 }
 
-export const formatDateTime = (dateStr: String) => {
-  return new Date(dateStr.replace(' ', 'T')).toLocaleString('en-US', {
+export const formatDateTime = (dateStr: String, locale?: string) => {
+  return new Date(dateStr.replace(' ', 'T')).toLocaleString(locale, {
     dateStyle: 'long',
     timeStyle: 'short',
   });

@@ -2,33 +2,35 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { formatBytes } from "@/lib/utils"
 import { useConfigurationStore, useDirEntryHistoryStore } from "./store"
-
-const chartConfig = {
-  size: {
-    label: "Size",
-    color: "hsla(273, 98%, 25%, 1.00)",
-  },
-}
+import { useTranslation } from "react-i18next"
 
 import { Card } from "@/components/ui/card"
 
 export function SpaceHistoryChart() {
+  const { t, i18n } = useTranslation();
   const chartData = useDirEntryHistoryStore((s) => s.currentDirEntryHistory);
 
   const showHistoryFlag = useConfigurationStore((state) => state.ShowHistory);
+  const locale = i18n.resolvedLanguage ?? i18n.language;
+  const chartConfig = {
+    size: {
+      label: t("history.chartLabel"),
+      color: "hsla(273, 98%, 25%, 1.00)",
+    },
+  };
 
   const renderContent = () => {
     if (!showHistoryFlag) {
       return (
         <div className="flex items-center justify-center h-full min-h-[200px] text-muted-foreground text-sm">
-          History graph disabled.
+          {t("history.disabled")}
         </div>
       )
     }
     if (!chartData || chartData.length === 0) {
       return (
         <div className="flex items-center justify-center h-full min-h-[200px] text-muted-foreground text-sm">
-          Select a directory or file to view history.
+          {t("history.empty")}
         </div>
       );
     }
@@ -77,7 +79,7 @@ export function SpaceHistoryChart() {
                 labelFormatter={(_, payload) => {
                   if (!payload?.[0]?.payload?.timestamp) return "";
                   const d = new Date(payload[0].payload.timestamp);
-                  return d.toLocaleDateString(undefined, { timeZone: "UTC" });
+                  return d.toLocaleDateString(locale, { timeZone: "UTC" });
                 }}
                 formatter={(value) => formatBytes(value)}
               />

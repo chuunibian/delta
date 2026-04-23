@@ -4,6 +4,7 @@ import { Button } from './ui/button'
 import { FolderSearch } from 'lucide-react'
 import { open } from '@tauri-apps/plugin-dialog'
 import { useErrorStore } from './store'
+import { useTranslation } from 'react-i18next'
 
 interface CustomPathProps {
   value: string;
@@ -11,6 +12,7 @@ interface CustomPathProps {
 }
 
 const CustomPath: React.FC<CustomPathProps> = ({ value, onChange }) => {
+  const { t } = useTranslation()
 
   const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
 
@@ -35,9 +37,9 @@ const CustomPath: React.FC<CustomPathProps> = ({ value, onChange }) => {
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Enter custom path..."
+        placeholder={t("scan.placeholders.customPath")}
       />
-      <Button variant="outline" size="icon" onClick={handleOpenDialog}>
+      <Button variant="outline" size="icon" onClick={handleOpenDialog} aria-label={t("scan.actions.browseFolder")}>
         <FolderSearch className="h-4 w-4" />
       </Button>
     </div>

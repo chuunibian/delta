@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { InitDisk } from "@/types";
+import { useTranslation } from "react-i18next";
 
 
 interface DiskPathProp {
@@ -19,11 +20,12 @@ interface DiskPathProp {
 // NOTE THAT FOR SHADE CN THE VALUEPROP PASSED TO THE SLECET ITEM IS THE KEY IT MANAGE IT ITSELF!!
 // THAT ALSO creates repated slectitems each with the value and the value is waht is propogated up on change
 const DiskPath = ({ disks, onValueChange }: DiskPathProp)  => {
+  const { t } = useTranslation()
   return (
     <>
         <Select onValueChange={onValueChange}>
           <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a disk" />
+              <SelectValue placeholder={t("scan.placeholders.selectDisk")} />
           </SelectTrigger>
           <SelectContent>
               <SelectGroup>

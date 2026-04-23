@@ -9,8 +9,10 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useErrorStore } from "./store"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export function NotificationCenter() {
+  const { t } = useTranslation()
   const backendErrorList = useErrorStore((state) => state.currentBackendErrors)
 
   const [unreadCount, setUnreadCount] = useState(0)
@@ -48,11 +50,11 @@ export function NotificationCenter() {
               {unreadCount}
             </Badge>
           )}
-          <span className="sr-only">Toggle notifications</span>
+          <span className="sr-only">{t("notifications.toggle")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="center">
-        <div className="p-2 font-medium text-sm">Notifications</div>
+        <div className="p-2 font-medium text-sm">{t("notifications.title")}</div>
         <ScrollArea className="h-[375px]">
           <div className="flex flex-col gap-1 p-2">
             {backendErrorList.map((notification, index) => (
@@ -61,7 +63,7 @@ export function NotificationCenter() {
                 className="flex flex-col gap-1 rounded-md p-3 text-xs transition-colors hover:bg-muted/50 bg-muted/20 border border-red-500/30 overflow-hidden"
               >
                 <div className="text-sm font-bold text-red-600 dark:text-red-400 break-all">
-                  {`Error: ${notification.err_code}`}
+                  {t("notifications.errorCode", { code: notification.err_code })}
                 </div>
                 {notification.library_generated_error_desc?.toLowerCase() !== "n/a" && (
                   <div className="font-medium text-[12px] text-foreground leading-tight break-words">

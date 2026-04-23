@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import DiskPath from './disk_path'
+import React, { useState } from 'react'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Separator } from '@/components/ui/separator'
 import CustomPath from './custom_path'
 import { Button } from './ui/button'
@@ -8,18 +7,11 @@ import { Checkbox } from './ui/checkbox'
 import { Label } from '@/components/ui/label'
 
 import { invoke } from '@tauri-apps/api/core';
-import { snapshotStore, useErrorStore, userStore } from './store'
-import { DataTable } from './data_table'
-import { SnapshotFile } from './data_table_columns'
-
-import { columns } from './data_table_columns'
-import { RowSelectionState } from '@tanstack/react-table'
+import { useErrorStore, userStore } from './store'
 import Progress from './progress'
 
-import DeltaLogo from '../../src-tauri/icons/64x64.png'
-import { DirView, InitDisk } from '@/types'
-import TopBar from './top-bar'
-import { ScanTabs } from './ScanTabs'
+import { DirView } from '@/types'
+import { useTranslation } from 'react-i18next'
 
 interface SplashPageProps {
     setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +19,7 @@ interface SplashPageProps {
 
 
 const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
+    const { t } = useTranslation()
 
     // Card only needs to read the currently selected snapshot file global store obj?
     const [selectedPath, setSelectedPath] = useState<string>("");
@@ -54,11 +47,11 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
     return (
         <Card className='w-[28rem] p-7'>
             <CardHeader>
-                <CardTitle>Start Snapshot</CardTitle>
+                <CardTitle>{t("scan.title")}</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col space-y-5">
-                    <p className="text-sm leading-none font-medium">Custom Path</p>
+                    <p className="text-sm leading-none font-medium">{t("scan.fields.customPath")}</p>
                     <CustomPath value={selectedPath} onChange={setSelectedPath} />
 
                     <Separator></Separator>
@@ -67,9 +60,9 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
                     <div className="flex items-start gap-3">
                         <Checkbox id="terms-2" checked={false} disabled={true}></Checkbox>
                         <div className="grid gap-2">
-                            <Label htmlFor="terms-2">Compare Snapshots</Label>
+                            <Label htmlFor="terms-2">{t("scan.options.compareSnapshots")}</Label>
                             <p className="text-muted-foreground text-sm">
-                                Compare current scan with previous scanned snapshot
+                                {t("scan.options.compareSnapshotsDescription")}
                             </p>
                         </div>
                     </div>
@@ -79,9 +72,9 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
                     <div className="flex items-start gap-3">
                         <Checkbox id="terms-2" checked={false} disabled={true}></Checkbox>
                         <div className="grid gap-2">
-                            <Label htmlFor="terms-2">Save Snapshot</Label>
+                            <Label htmlFor="terms-2">{t("scan.options.saveSnapshot")}</Label>
                             <p className="text-muted-foreground text-sm">
-                                Save current scan into new snapshot file
+                                {t("scan.options.saveSnapshotDescription")}
                             </p>
                         </div>
                     </div>
@@ -90,7 +83,7 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
             </CardContent>
             <CardFooter>
                 <div className="w-full flex flex-row items-center justify-center gap-3">
-                    <Button variant="outline" onClick={() => runScan(selectedPath)}>Scan</Button>
+                    <Button variant="outline" onClick={() => runScan(selectedPath)}>{t("scan.actions.scan")}</Button>
                     <Progress></Progress>
                 </div>
             </CardFooter>

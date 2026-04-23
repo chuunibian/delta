@@ -4,12 +4,14 @@ import { SettingsPage } from './sheet-demo'
 import { NotificationCenter } from './NotificationCenter'
 import { Button } from './ui/button'
 import { ArrowLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface TopBarProps {
     onHomeClick?: () => void;
 }
 
 const TopBar = ({ onHomeClick }: TopBarProps) => {
+    const { t } = useTranslation()
     const currentPath = userStore((state) => state.currentPath)
     const currentEntryDetails = userStore((state) => state.currentEntryDetail)
     let numsubdir = currentEntryDetails.numsubdir ? String(currentEntryDetails.numsubdir) : ("0");
@@ -28,7 +30,7 @@ const TopBar = ({ onHomeClick }: TopBarProps) => {
                 <div>
                     <Badge className="h-5 min-w-5 rounded-full px-1 text-sm font-mono text-yellow-500 tabular-nums"
                         variant="outline">
-                        {`Subdir: ${numsubdir} Subfiles: ${numsubfile}`}
+                        {`${t("topBar.subdir")}: ${numsubdir} ${t("topBar.subfiles")}: ${numsubfile}`}
                     </Badge>
                     <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
                         variant="outline">

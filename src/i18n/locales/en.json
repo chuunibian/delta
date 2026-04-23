@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Delta",
+    "logoAlt": "Delta app logo"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "copy": "Copy",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "notAvailable": "N/A",
+    "reveal": "Reveal"
+  },
+  "scan": {
+    "tabs": {
+      "fullDisk": "Full Disk",
+      "customPath": "Custom Path"
+    },
+    "title": "Start Snapshot",
+    "fields": {
+      "disk": "Disk",
+      "customPath": "Custom Path"
+    },
+    "placeholders": {
+      "selectDisk": "Select a disk",
+      "customPath": "Enter custom path..."
+    },
+    "actions": {
+      "scan": "Scan",
+      "browseFolder": "Browse folder"
+    },
+    "options": {
+      "compareSnapshots": "Compare Snapshots",
+      "compareSnapshotsDescription": "Compare current scan with previous scanned snapshot",
+      "saveSnapshot": "Save Snapshot",
+      "saveSnapshotDescription": "Save current scan into new snapshot file"
+    },
+    "fallback": {
+      "unknownDisk": "Unknown",
+      "noDisksFound": "No Disks Found"
+    }
+  },
+  "snapshot": {
+    "title": "Local Snapshots",
+    "description": "Select a snapshot below to remove it from your local storage.",
+    "empty": "No snapshot files.",
+    "columns": {
+      "driveName": "Drive Name",
+      "date": "Date",
+      "size": "Size"
+    },
+    "deleteSelected": "Delete Selected",
+    "deleteTitle": "Delete Snapshot?",
+    "deleteDescription": "This will permanently delete the selected snapshot from your disk."
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage local snapshots and configuration.",
+    "dataManagement": "Data Management",
+    "configurations": "Configurations",
+    "language": "Language",
+    "languageDescription": "Choose the display language for the app.",
+    "historyGraph": "History Graph",
+    "historyGraphDescription": "Enable the historical size graph when viewing directory entries."
+  },
+  "tree": {
+    "headers": {
+      "name": "Name",
+      "size": "Size",
+      "previous": "Prev",
+      "change": "Change",
+      "flag": "Flag"
+    }
+  },
+  "overview": {
+    "type": {
+      "directory": "Directory",
+      "file": "File"
+    },
+    "metrics": {
+      "size": "Size",
+      "previousSize": "Previous Size",
+      "sizeChange": "Size Change",
+      "subdirs": "Subdirs",
+      "previousSubdirs": "Prev Subdirs",
+      "subdirChange": "Subdir Change",
+      "files": "Files",
+      "previousFiles": "Prev Files",
+      "filesChange": "Files Change"
+    },
+    "dates": {
+      "created": "Created",
+      "modified": "Modified"
+    }
+  },
+  "history": {
+    "chartLabel": "Size",
+    "disabled": "History graph disabled.",
+    "empty": "Select a directory or file to view history."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "toggle": "Toggle notifications",
+    "errorCode": "Error: {{code}}"
+  },
+  "topBar": {
+    "subdir": "Subdir",
+    "subfiles": "Subfiles"
+  }
+}

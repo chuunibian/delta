@@ -33,6 +33,7 @@
 import { ScrollArea } from "./ui/scroll-area"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import { ColumnDef, flexRender, getCoreRowModel, OnChangeFn, RowSelectionState, useReactTable } from "@tanstack/react-table"
+import { useTranslation } from "react-i18next"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -43,6 +44,7 @@ interface DataTableProps<TData, TValue> {
 
 // making the datatable generic with the input types
 export function DataTable<TData, TValue>({columns, data, rowSelection, setRowSelection}: DataTableProps<TData, TValue>) {
+  const { t } = useTranslation()
   const table = useReactTable({
     data,
     columns,
@@ -104,7 +106,7 @@ export function DataTable<TData, TValue>({columns, data, rowSelection, setRowSel
               (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="text-center">
-                    No snapshot files.
+                    {t("snapshot.empty")}
                   </TableCell>
                 </TableRow>
               )
