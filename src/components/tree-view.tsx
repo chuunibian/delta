@@ -20,6 +20,7 @@ const COL_WIDTHS = {
 };
 
 // Sort indicator arrow shown next to the active sort column
+// depending on the 2 status flags it generates the icon or no icon
 const SortIndicator = ({ column }: { column: SortColumn }) => {
   const sortColumn = useSortStore((s) => s.sortColumn);
   const sortDirection = useSortStore((s) => s.sortDirection);

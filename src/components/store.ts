@@ -4,7 +4,6 @@ import { BackendError, CurrentEntryDetails, DirView, DirViewChildren, TreeDataNo
 import { appendPaths } from "@/lib/utils";
 import { SnapshotFile } from "./data_table_columns";
 
-// ── Sorting ──────────────────────────────────────────────────────────────────
 export type SortColumn = "name" | "size" | "change";
 export type SortDirection = "asc" | "desc";
 
@@ -25,7 +24,7 @@ export const useSortStore = create<SortStore>((set, get) => ({
     } else {
       set({ sortColumn: column, sortDirection: "desc" });
     }
-    // re-sort the tree in place and force re-render
+    // re-sort the frontend fs tree representation in place and force re-render
     const root = userStore.getState().root;
     const { sortColumn: col, sortDirection: dir } = useSortStore.getState();
     sortTreeInPlace(root, col, dir);
@@ -65,6 +64,7 @@ export function sortTreeInPlace(
     }
   });
 
+  // recurse search for each child
   for (const child of node.children) {
     sortTreeInPlace(child, column, direction);
   }
@@ -287,8 +287,11 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
         currentNode.children = newChildren;
 
         // Sort newly loaded children to respect current sort order
-        const { sortColumn, sortDirection } = useSortStore.getState();
-        sortTreeInPlace(currentNode, sortColumn, sortDirection);
+        // backend already sends size desc so skip in that case
+        // const { sortColumn, sortDirection } = useSortStore.getState();
+        // if (sortColumn !== "size" || sortDirection !== "desc") {
+        //   sortTreeInPlace(currentNode, sortColumn, sortDirection);
+        // }
 
         // FORCE RE-RENDER:
         return {
