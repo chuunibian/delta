@@ -1,7 +1,8 @@
 import { Tree } from "react-arborist";
-import { useDirEntryHistoryStore, userStore } from "./store";
+import { useDirEntryHistoryStore, userStore, useSortStore } from "./store";
+import type { SortColumn } from "./store";
 import useResizeObserver from "use-resize-observer";
-import { Folder, File, FolderOpen, ArrowRight } from "lucide-react";
+import { Folder, File, FolderOpen, ArrowUp, ArrowDown } from "lucide-react";
 import { filesize } from "filesize";
 import { Badge } from "./ui/badge";
 import InfoFlagBar from "./info_flag_bar";
@@ -18,17 +19,44 @@ const COL_WIDTHS = {
   diff: "w-26",
 };
 
-// Header
-const TreeHeader = () => (
-  <div className="flex items-center h-8 text-xs font-mono font-bold text-gray-400 select-none min-w-[600px]">
-    <div className="flex-1 pl-1">Name</div>
+// Sort indicator arrow shown next to the active sort column
+const SortIndicator = ({ column }: { column: SortColumn }) => {
+  const sortColumn = useSortStore((s) => s.sortColumn);
+  const sortDirection = useSortStore((s) => s.sortDirection);
+  if (sortColumn !== column) return null;
+  return sortDirection === "asc"
+    ? <ArrowUp className="h-3 w-3 inline-block ml-0.5" />
+    : <ArrowDown className="h-3 w-3 inline-block ml-0.5" />;
+};
 
-    <div className={`${COL_WIDTHS.size} text-right px-2 border-l border-gray-300`}>Size</div>
-    <div className={`${COL_WIDTHS.prev} text-right px-2 border-l border-gray-300`}>Prev</div>
-    <div className={`${COL_WIDTHS.change} text-right px-2 border-l border-gray-300`}>Change</div>
-    <div className={`${COL_WIDTHS.diff} text-right px-2 border-l border-gray-300`}>Flag</div>
-  </div>
-);
+const TreeHeader = () => {
+  const toggleSort = useSortStore((s) => s.toggleSort);
+  return (
+    <div className="flex items-center h-8 text-xs font-mono font-bold text-gray-400 select-none min-w-[600px]">
+      <div
+        className="flex-1 pl-1 cursor-pointer hover:text-gray-200 transition-colors"
+        onClick={() => toggleSort("name")}
+      >
+        Name<SortIndicator column="name" />
+      </div>
+
+      <div
+        className={`${COL_WIDTHS.size} text-right px-2 border-l border-gray-300 cursor-pointer hover:text-gray-200 transition-colors`}
+        onClick={() => toggleSort("size")}
+      >
+        Size<SortIndicator column="size" />
+      </div>
+      <div className={`${COL_WIDTHS.prev} text-right px-2 border-l border-gray-300`}>Prev</div>
+      <div
+        className={`${COL_WIDTHS.change} text-right px-2 border-l border-gray-300 cursor-pointer hover:text-gray-200 transition-colors`}
+        onClick={() => toggleSort("change")}
+      >
+        Change<SortIndicator column="change" />
+      </div>
+      <div className={`${COL_WIDTHS.diff} text-right px-2 border-l border-gray-300`}>Flag</div>
+    </div>
+  );
+};
 
 const SimpleNode = ({ node, style, dragHandle }: any) => {
 
