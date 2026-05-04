@@ -4,6 +4,72 @@ import { BackendError, CurrentEntryDetails, DirView, DirViewChildren, TreeDataNo
 import { appendPaths } from "@/lib/utils";
 import { SnapshotFile } from "./data_table_columns";
 
+export type SortColumn = "name" | "size" | "change";
+export type SortDirection = "asc" | "desc";
+
+interface SortStore {
+  sortColumn: SortColumn;
+  sortDirection: SortDirection;
+  toggleSort: (column: SortColumn) => void;
+}
+
+export const useSortStore = create<SortStore>((set, get) => ({
+  sortColumn: "size",
+  sortDirection: "desc",
+  // helper emt
+  toggleSort: (column) => {
+    const { sortColumn, sortDirection } = get();
+    if (sortColumn === column) {
+      set({ sortDirection: sortDirection === "asc" ? "desc" : "asc" });
+    } else {
+      set({ sortColumn: column, sortDirection: "desc" });
+    }
+    // re-sort the frontend fs tree representation in place and force re-render
+    const root = userStore.getState().root;
+    const { sortColumn: col, sortDirection: dir } = useSortStore.getState();
+    sortTreeInPlace(root, col, dir);
+    userStore.setState({ root: { ...root } });
+  },
+}));
+
+// compute size change helper
+function getChangeValue(node: TreeDataNode): number {
+  if (!node.diff) return 0;
+  if (node.diff.deleted_flag) return (node.diff.prevsize ?? 0) - (node.size ?? 0);
+  return (node.size ?? 0) - (node.diff.prevsize ?? 0);
+}
+
+// Recursively sort every children array in the tree in-place
+export function sortTreeInPlace(
+  node: TreeDataNode,
+  column: SortColumn,
+  direction: SortDirection
+): void {
+  if (!node.children || node.children.length === 0) return;
+
+  const dir = direction === "asc" ? 1 : -1;
+
+  node.children.sort((a, b) => {
+    if (a.directory !== b.directory) return a.directory ? -1 : 1;
+
+    switch (column) {
+      case "name":
+        return dir * a.name.localeCompare(b.name);
+      case "size":
+        return dir * ((a.size ?? 0) - (b.size ?? 0));
+      case "change":
+        return dir * (Math.abs(getChangeValue(a)) - Math.abs(getChangeValue(b)));
+      default:
+        return 0;
+    }
+  });
+
+  // recurse search for each child
+  for (const child of node.children) {
+    sortTreeInPlace(child, column, direction);
+  }
+}
+
 // caching ht for history graph making it a singleton for now
 let historyCache: Record<string, { timestamp: number; sizeBytes: number }[]> = {}
 // TODO cache clear helper
@@ -219,6 +285,13 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
 
         // Mutate the node reference directly
         currentNode.children = newChildren;
+
+        // Sort newly loaded children to respect current sort order
+        // backend already sends size desc so skip in that case
+        const { sortColumn, sortDirection } = useSortStore.getState();
+        if (sortColumn !== "size" || sortDirection !== "desc") {
+          sortTreeInPlace(currentNode, sortColumn, sortDirection);
+        }
 
         // FORCE RE-RENDER:
         return {
