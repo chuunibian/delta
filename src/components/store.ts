@@ -288,10 +288,10 @@ export const userStore = create<FrontEndFileSystemStore>((set, get) => ({
 
         // Sort newly loaded children to respect current sort order
         // backend already sends size desc so skip in that case
-        // const { sortColumn, sortDirection } = useSortStore.getState();
-        // if (sortColumn !== "size" || sortDirection !== "desc") {
-        //   sortTreeInPlace(currentNode, sortColumn, sortDirection);
-        // }
+        const { sortColumn, sortDirection } = useSortStore.getState();
+        if (sortColumn !== "size" || sortDirection !== "desc") {
+          sortTreeInPlace(currentNode, sortColumn, sortDirection);
+        }
 
         // FORCE RE-RENDER:
         return {
