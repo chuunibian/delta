@@ -8,10 +8,8 @@ import { SnapshotFile } from './data_table_columns'
 
 import { columns } from './data_table_columns'
 import { RowSelectionState } from '@tanstack/react-table'
-import Progress from './progress'
 
 import DeltaLogo from '../../src-tauri/icons/64x64.png'
-import { DirView, InitDisk } from '@/types'
 import TopBar from './top-bar'
 import { ScanTabs } from './ScanTabs'
 

@@ -8,18 +8,11 @@ import { Checkbox } from './ui/checkbox'
 import { Label } from '@/components/ui/label'
 
 import { invoke } from '@tauri-apps/api/core';
-import { snapshotStore, useErrorStore, userStore } from './store'
-import { DataTable } from './data_table'
-import { SnapshotFile } from './data_table_columns'
-
-import { columns } from './data_table_columns'
-import { RowSelectionState } from '@tanstack/react-table'
+import { useErrorStore, userStore } from './store'
 import Progress from './progress'
 
-import DeltaLogo from '../../src-tauri/icons/64x64.png'
-import { DirView, InitDisk } from '@/types'
-import TopBar from './top-bar'
-import { ScanTabs } from './ScanTabs'
+import { DirView } from '@/types'
+
 
 interface SplashPageProps {
     setWhichField: React.Dispatch<React.SetStateAction<boolean>>;

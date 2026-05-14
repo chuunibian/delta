@@ -3,9 +3,6 @@ import { useDirEntryHistoryStore, userStore, useSortStore } from "./store";
 import type { SortColumn } from "./store";
 import useResizeObserver from "use-resize-observer";
 import { Folder, File, FolderOpen, ArrowUp, ArrowDown } from "lucide-react";
-import { filesize } from "filesize";
-import { Badge } from "./ui/badge";
-import InfoFlagBar from "./info_flag_bar";
 import { formatBytes, parsePathToSegment, pathSeparator } from "../lib/utils"
 import { Progress } from "./ui/progress";
 
