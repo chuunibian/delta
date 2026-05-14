@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import DiskPath from './disk_path'
-import { Separator } from '@/components/ui/separator'
-import CustomPath from './custom_path'
-import { Button } from './ui/button'
-import { Checkbox } from './ui/checkbox'
-import { Label } from '@/components/ui/label'
 
 import { invoke } from '@tauri-apps/api/core';
 import { snapshotStore, useErrorStore, userStore } from './store'
@@ -14,10 +8,8 @@ import { SnapshotFile } from './data_table_columns'
 
 import { columns } from './data_table_columns'
 import { RowSelectionState } from '@tanstack/react-table'
-import Progress from './progress'
 
 import DeltaLogo from '../../src-tauri/icons/64x64.png'
-import { DirView, InitDisk } from '@/types'
 import TopBar from './top-bar'
 import { ScanTabs } from './ScanTabs'
 

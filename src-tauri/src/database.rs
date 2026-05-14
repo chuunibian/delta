@@ -185,7 +185,7 @@ pub async fn write_current_tree(
 
     {
         let mut stmt = temp_transaction.prepare(
-            "INSERT INTO snapshot (id, size, dir_flag, sub_folder_count, sub_file_count, parent_id)
+            "INSERT OR REPLACE INTO snapshot (id, size, dir_flag, sub_folder_count, sub_file_count, parent_id)
              VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
         )?;
 

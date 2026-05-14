@@ -8,18 +8,11 @@ import { Checkbox } from './ui/checkbox'
 import { Label } from '@/components/ui/label'
 
 import { invoke } from '@tauri-apps/api/core';
-import { snapshotStore, useErrorStore, userStore } from './store'
-import { DataTable } from './data_table'
-import { SnapshotFile } from './data_table_columns'
-
-import { columns } from './data_table_columns'
-import { RowSelectionState } from '@tanstack/react-table'
+import { useErrorStore, userStore } from './store'
 import Progress from './progress'
 
-import DeltaLogo from '../../src-tauri/icons/64x64.png'
-import { DirView, InitDisk } from '@/types'
-import TopBar from './top-bar'
-import { ScanTabs } from './ScanTabs'
+import { DirView } from '@/types'
+
 
 interface SplashPageProps {
     setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,8 +28,15 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
     const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
 
+    const [scanButtonState, setScanButtonState] = useState<boolean>(false); // false = not scan, true = scan TODO
+
     const runScan = async (target: string) => {
+        if (scanButtonState) return;
+
         try {
+
+            setScanButtonState(true)
+
             const result = await invoke<DirView>('disk_scan', { target, snapshotFile, snapshotFlag: false }); // always flag set to false
 
             const zustandInitFunc = userStore.getState().initDirData;
@@ -47,6 +47,8 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
         } catch (e) {
             setCurrentBackendError(e)
+        } finally {
+            setScanButtonState(false)
         }
     }
 
@@ -90,7 +92,7 @@ const CustomPathCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
             </CardContent>
             <CardFooter>
                 <div className="w-full flex flex-row items-center justify-center gap-3">
-                    <Button variant="outline" onClick={() => runScan(selectedPath)}>Scan</Button>
+                    <Button variant="outline" disabled={scanButtonState} onClick={() => runScan(selectedPath)}>Scan</Button>
                     <Progress></Progress>
                 </div>
             </CardFooter>

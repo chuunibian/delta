@@ -1,7 +1,6 @@
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useConfigurationStore } from "./store"
-import { Activity } from "lucide-react"
 
 export function HistoryToggle() {
     const setShowHistory = useConfigurationStore((state) => state.setShowHistory)
