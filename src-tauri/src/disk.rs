@@ -169,11 +169,9 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
                                 num_subdir: 0,
                             },
                             id: {
-                                if let Some(temp) = entry.path().to_str() {
-                                    hash_path_id(temp)
-                                } else {
-                                    hash_path_id("thereisnothingthisisjusttestchangelater")
-                                }
+                                // Still possible for duplicate hashes if lossy parts are exactly the same
+                                let temp = entry.path().to_string_lossy();
+                                hash_path_id(&temp)
                             },
                         };
 

@@ -36,6 +36,8 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
     const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
 
+    const [scanButtonState, setScanButtonState] = useState<boolean>(false); // false = not scan, true = scan
+
 
     useEffect(() => {
         const getDisks = async () => {
@@ -54,11 +56,13 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
     }, []);
 
     const runScan = async (target: string) => {
+        if (scanButtonState) return;
+
         try {
 
-            console.time("invoke");
+            setScanButtonState(true)
+
             const result = await invoke<DirView>('disk_scan', { target, snapshotFile, snapshotFlag });
-            console.timeEnd("invoke");
 
             const zustandInitFunc = userStore.getState().initDirData;
 
@@ -69,11 +73,13 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
 
             zustandInitFunc(result, target);
 
-            setWhichField(false); // state switch to anallytics screen
+            setWhichField(false); // state switch to analytics screen
 
         } catch (e) {
             setCurrentBackendError(e)
             console.log(e)
+        } finally {
+            setScanButtonState(false)
         }
     }
 
@@ -116,7 +122,7 @@ const FullDiskCard: React.FC<SplashPageProps> = ({ setWhichField }) => {
             </CardContent>
             <CardFooter>
                 <div className="w-full flex flex-row items-center justify-center gap-3">
-                    <Button variant="outline" onClick={() => runScan(selectedDisk)}>Scan</Button>
+                    <Button variant="outline" disabled={scanButtonState} onClick={() => runScan(selectedDisk)}>Scan</Button>
                     <Progress></Progress>
                 </div>
             </CardFooter>
