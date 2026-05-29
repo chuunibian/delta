@@ -10,6 +10,7 @@ mod error;
 mod model;
 mod startup;
 mod platform;
+mod fs_commands;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -69,6 +70,7 @@ pub fn run() {
             database::get_local_snapshot_files,
             database::delete_snapshot_file,
             database::get_path_historical_data,
+            fs_commands::get_snapshot_storage_path,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
