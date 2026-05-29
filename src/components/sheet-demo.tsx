@@ -31,6 +31,7 @@ import { Trash2, Settings } from "lucide-react"
 import { snapshotStore, useErrorStore } from "./store"
 import { HistoryToggle } from "./HistoryToggle"
 import { Separator } from '@/components/ui/separator'
+import { SnapshotFolderCard } from "./SnapshotFolderCard"
 
 
 export function SettingsPage() {
@@ -175,6 +176,7 @@ export function SettingsPage() {
               </div>
 
               <HistoryToggle></HistoryToggle>
+              <SnapshotFolderCard></SnapshotFolderCard>
 
             </div>
           </div>
