@@ -1,25 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Label } from "@/components/ui/label"
 import { Button } from './ui/button'
-import { open } from '@tauri-apps/plugin-dialog'
 import { useErrorStore } from './store'
 import { invoke } from '@tauri-apps/api/core';
 
 export function SnapshotFolderCard() {
+    // Fetch once on load of component then store path as state prevent fetch each time
     const setCurrentBackendError = useErrorStore((state) => state.setCurrentBackendError)
 
     const [copied, setCopied] = useState(false);
-    
-    const handleOpenDialog = async () => {
-        try {
-            const path: string = await invoke('get_snapshot_storage_path')
-            await navigator.clipboard.writeText(path)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 1333)
-        } catch (err) {
-            setCurrentBackendError(err)
-        }
+    const [snapshotPath, setSnapshotPath] = useState<string | null>(null);
+
+    useEffect(() => {
+        invoke<string>('get_snapshot_storage_path')
+            .then(setSnapshotPath)
+            .catch(setCurrentBackendError)
+    }, [])
+
+    const handleOpenDialog = () => {
+        if (!snapshotPath) return
+        navigator.clipboard.writeText(snapshotPath)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1333)
     }
 
     return (
