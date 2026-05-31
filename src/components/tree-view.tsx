@@ -77,7 +77,14 @@ const SimpleNode = ({ node, style, dragHandle }: any) => {
   // file name color
   let file_name_text_color = node.data.diff?.deleted_flag ? "text-red-500" : "text-grey-200";
 
-  let row_bg_color = node.data.diff?.deleted_flag ? "bg-red-950/30" : "bg-transparent";
+  let row_bg_color = "bg-transparent";
+  if (node.data.diff) {
+    if (node.data.diff.deleted_flag) {
+      row_bg_color = "bg-red-950/30";
+    } else if (node.data.diff.new_flag) {
+      row_bg_color = "bg-green-950/30";
+    }
+  }
 
   // Handle new, deleted, gray
   let status_field_color = "bg-transparent";
