@@ -7,7 +7,7 @@
   ],
   "permissions": [
     "core:default",
-    "opener:default",
+    "opener:allow-reveal-item-in-dir",
     "dialog:default"
   ]
 }
