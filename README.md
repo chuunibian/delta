@@ -26,11 +26,23 @@ https://github.com/user-attachments/assets/10722d41-1676-4030-86d9-0173415e87d5
 - **Red numbers:** The directory/file has **more bytes** than in the previous scan.
 - **Grey numbers:** There was **no change** in size.
 
+## Comparing Two Saved Snapshots
+
+Besides comparing a live scan to one previous snapshot, you can diff any two saved snapshots directly against each other — useful for looking back at how a drive changed between two specific points in time without rescanning it.
+
+1. From the start screen, open the **Compare Snapshots** tab.
+2. Pick a **Base snapshot** and a **Compare against** snapshot from your saved history.
+3. Click **Compare**. Delta loads both snapshots and shows the diff in the same tree view used for live scans — new/deleted/changed entries are highlighted the same way.
+
+> Snapshots taken before this feature was added don't carry the metadata needed to be loaded this way — take a fresh snapshot to use them in a two-snapshot compare.
+
 ## Features
 
 - **Scan Comparisons:** Save snapshots of your disk state and compare current scans to previous ones. Allows user to identify which folders or files have grown in size.
+- **Snapshot vs. Snapshot Compare:** Diff any two saved snapshots against each other, not just live scan vs. one snapshot.
 - **Local & Private:** Runs 100% offline. No telemetry, no cloud uploads. Data is stored 100% locally.
 - **Lightweight:** Built with Rust and Tauri for a lightweight install and run footprint.
+- **Portable Snapshots:** Snapshot node identity is based on the path relative to the scanned drive/folder, so a snapshot copied to another machine (different username, different drive letter) still compares correctly instead of reading as "all new."
 
 ## Downloads & Install
 
@@ -62,7 +74,18 @@ https://github.com/user-attachments/assets/10722d41-1676-4030-86d9-0173415e87d5
     npm install
     npm run tauri dev
    ```
-   
+
+### Portable Version
+
+Delta can run with no installer and no data written outside its own folder — copy the app folder anywhere (a USB stick, another PC) and it keeps working.
+
+To run portably, either:
+- Place a `data` folder next to the Delta executable, or
+- Place an empty `portable.txt` file next to the Delta executable.
+
+On startup, Delta detects either marker and stores all snapshots under `data/tempsnapshot` next to the executable instead of your OS's app-data directory. If that folder turns out not to be writable (e.g. the app is running from a read-only location), Delta automatically falls back to the normal OS app-data directory instead of failing to start.
+
+> Portable mode only changes *where* snapshots are stored. Build/packaging still produces the normal installers described above — running portably just means dropping the built executable (plus the marker) into its own folder rather than installing it.
 
 ## Tech stack
 
