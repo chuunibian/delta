@@ -41,8 +41,12 @@ pub fn run() {
                 }
             };
 
-            
-            if let Err(e) = startup::startup_checks(&local_app_data_path) {
+            // Design fix: prefer a portable data folder next to the executable when
+            // available, so the app can run with no install and no OS-scoped storage.
+            // See docs/designDeltaPortableApp.md (part A).
+            let storage_root = startup::resolve_storage_root(local_app_data_path);
+
+            if let Err(e) = startup::startup_checks(&storage_root) {
                 app.dialog()
                     .message(format!(
                         "An error has occured during app startup: {}",
@@ -55,7 +59,7 @@ pub fn run() {
 
             let state = BackendState {
                 file_tree: std::sync::Mutex::new(None),
-                local_appdata_path: Some(local_app_data_path), 
+                snapshot_storage_root: Some(storage_root),
             };
             app.manage(state);
 
@@ -71,6 +75,7 @@ pub fn run() {
             database::delete_snapshot_file,
             database::get_path_historical_data,
             fs_commands::get_snapshot_storage_path,
+            database::compare_two_snapshots,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
