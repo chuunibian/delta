@@ -5,6 +5,35 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Delta</title>
+
+    <!-- Paint the correct theme background before any stylesheet or JS bundle loads. -->
+    <style>
+      html {
+        background-color: #0c0a09;
+        color-scheme: dark;
+      }
+      html.light {
+        background-color: #ffffff;
+        color-scheme: light;
+      }
+    </style>
+    <!-- Keep in sync with src/components/theme-provider.tsx (storageKey + defaultTheme). -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("vite-ui-theme") || "dark";
+          var theme =
+            stored === "system"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light"
+              : stored;
+          document.documentElement.classList.add(theme);
+        } catch (e) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
   </head>
 
   <body>
