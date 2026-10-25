@@ -59,6 +59,17 @@ pub fn run() {
             };
             app.manage(state);
 
+            #[cfg(target_os = "linux")]
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.with_webview(|webview| {
+                    use webkit2gtk::{SettingsExt, WebViewExt};
+                    if let Some(settings) = webview.inner().settings() {
+                        // Avoid delayed touchpad movement in the directory tree.
+                        settings.set_enable_smooth_scrolling(false);
+                    }
+                });
+            }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
