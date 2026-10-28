@@ -19,6 +19,7 @@ import { Button } from "./ui/button"
 import Progress from './progress'
 import FullDiskCard from "./FullDiskCard"
 import CustomPathCard from "./CustomPathCard"
+import CompareSnapshotsCard from "./CompareSnapshotsCard"
 
 interface SplashPageProps {
     setWhichField: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,12 +31,16 @@ export function ScanTabs({ setWhichField }) {
             <TabsList>
                 <TabsTrigger value="fulldisk">Full Disk</TabsTrigger>
                 <TabsTrigger value="custompath">Custom Path</TabsTrigger>
+                <TabsTrigger value="comparesnapshots">Compare Snapshots</TabsTrigger>
             </TabsList>
             <TabsContent value="fulldisk">
                 <FullDiskCard setWhichField={setWhichField}></FullDiskCard>
             </TabsContent>
             <TabsContent value="custompath">
                 <CustomPathCard setWhichField={setWhichField}></CustomPathCard>
+            </TabsContent>
+            <TabsContent value="comparesnapshots">
+                <CompareSnapshotsCard setWhichField={setWhichField}></CompareSnapshotsCard>
             </TabsContent>
         </Tabs>
     )

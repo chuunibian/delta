@@ -20,6 +20,7 @@ export default function Overview() {
 
 
     const currentNode = userStore((state) => state.currentEntryData)
+    const compareMode = userStore((state) => state.compareMode)
 
     const current_size = currentNode.size
     const current_size_str = filesize(Number(current_size), { base: 2, standard: "jedec" }) as string
@@ -174,9 +175,13 @@ export default function Overview() {
                         {currentNode.path}
                     </code>
 
-                    <Button className="absolute bottom-1 right-1 h-3 px-2 text-[10px] " variant="destructive" onClick={
-                        () => { test_reveal_opener(currentNode.path) }
-                    }>Reveal</Button>
+                    <Button
+                        className="absolute bottom-1 right-1 h-3 px-2 text-[10px] "
+                        variant="destructive"
+                        disabled={compareMode}
+                        title={compareMode ? "Not available while comparing two snapshots" : undefined}
+                        onClick={() => { test_reveal_opener(currentNode.path) }}
+                    >Reveal</Button>
                     <Button className="absolute bottom-1 right-13 h-3 px-2 text-[10px] " variant="outline" onClick={
                         () => { navigator.clipboard.writeText(currentNode.path) }
                     }>Copy</Button>

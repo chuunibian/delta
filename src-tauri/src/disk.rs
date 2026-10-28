@@ -1,7 +1,7 @@
 use humansize::{format_size, DECIMAL};
 use std::collections::HashMap;
 use std::fs::{self};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 use sysinfo::Disks;
 use tauri::{AppHandle, Emitter};
@@ -68,7 +68,10 @@ pub async fn disk_scan(
     };
 
     // make the global state have the FS object
-    let mut file_tree = state.file_tree.lock().unwrap();
+    // Reliability fix: convert poisoned lock into a handled backend error instead of panic.
+    let mut file_tree = state.file_tree.lock().map_err(|_| {
+        AppError::GeneralLogicalErr("Backend tree state lock is poisoned".to_string())
+    })?;
     *file_tree = Some(root); // deref the mutex guard then assign
 
     Ok(root_view)
@@ -82,36 +85,54 @@ pub fn query_new_dir_object(
     snapshot_flag: bool,
     prev_snapshot_file_path: String, // < - frontend manages what snapshto file to compare to and it sends in that path to here to query
 ) -> Result<model::DirViewChildren, AppError> {
-    // This asks state for file_tree mutex and locks it to become mutexguard holding Option<Dir>
-    let file_tree = state.file_tree.lock().unwrap();
+    // Performance fix: clone only the requested subtree, then release the mutex early.
+    // This prevents long-held locks during diff/database work and improves command concurrency.
+    let selected_dir = {
+        let file_tree = state.file_tree.lock().map_err(|_| {
+            AppError::GeneralLogicalErr("Backend tree state lock is poisoned".to_string())
+        })?;
 
-    if let Some(root_dir) = file_tree.as_ref() {
-        // using as ref for &Dir we dont want to take ownership of the Dir from the Global State
+        if let Some(root_dir) = file_tree.as_ref() {
+            let mut current_dir = root_dir;
 
-        let mut current_dir = root_dir; // temp variable, needs to be mut, a mutable ref to a ref of dir, basically you can reassign this var to different ref of Dirs but cannot modify them since not &mut Dir
+            for part in &path_list {
+                current_dir = current_dir.subdirs.get(part).ok_or_else(|| {
+                    AppError::GeneralLogicalErr(format!(
+                        "Requested query path has word {} which was not found in that directory",
+                        part
+                    ))
+                })?;
+            }
 
-        for part in &path_list {
-            current_dir = current_dir.subdirs.get(part).ok_or_else(|| {
-                AppError::GeneralLogicalErr(format!(
-                    "Requested query path has word {} which was not found in that directory",
-                    part
-                ))
-            })?;
-        }
-
-        if snapshot_flag == false {
-            Ok(current_dir.get_subdir_and_files_no_diff())
+            current_dir.clone()
         } else {
-            current_dir.get_subdir_and_files(state.clone(), prev_snapshot_file_path)
+            return Err(AppError::GeneralLogicalErr(
+                "There is no root Dir object in backend memory state".to_string(),
+            ));
         }
+    };
+
+    if snapshot_flag == false {
+        Ok(selected_dir.get_subdir_and_files_no_diff())
     } else {
-        Err(AppError::GeneralLogicalErr(
-            "There is no root Dir object in backend memory state".to_string(),
-        ))
+        selected_dir.get_subdir_and_files(state.clone(), prev_snapshot_file_path)
     }
 }
 
+// Design fix: hash the path relative to the scanned root (with separators
+// normalized to '/') instead of the absolute path, so node identity survives
+// a different username, drive letter, or parent directory when a snapshot is
+// compared on another machine. See docs/designDeltaPortableApp.md (part B).
+fn relative_hash_key(target_root: &Path, absolute_path: &Path) -> String {
+    absolute_path
+        .strip_prefix(target_root)
+        .unwrap_or(absolute_path)
+        .to_string_lossy()
+        .replace('\\', "/")
+}
+
 pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> {
+    let target_root = Path::new(target);
     let mut hash_store_dir: HashMap<PathBuf, model::Dir> = HashMap::new();
     let mut hash_store_file: HashMap<PathBuf, model::File> = HashMap::new();
 
@@ -139,13 +160,7 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
                             modified: file_meta.accessed().unwrap_or(SystemTime::UNIX_EPOCH),
                         },
                         name: entry.file_name().to_string_lossy().to_string(),
-                        id: {
-                            if let Some(temp) = entry.path().to_str() {
-                                hash_path_id(temp)
-                            } else {
-                                hash_path_id("err")
-                            }
-                        },
+                        id: hash_path_id(&relative_hash_key(target_root, entry.path())),
                     };
 
                     hash_store_file.insert(entry.path().to_path_buf(), new_file_node);
@@ -168,11 +183,8 @@ pub fn naive_scan(target: &str, app: AppHandle) -> Result<model::Dir, AppError> 
                                 num_files: 0, // I believe you can get these from the previous entry variable
                                 num_subdir: 0,
                             },
-                            id: {
-                                // Still possible for duplicate hashes if lossy parts are exactly the same
-                                let temp = entry.path().to_string_lossy();
-                                hash_path_id(&temp)
-                            },
+                            // Still possible for duplicate hashes if lossy parts are exactly the same
+                            id: hash_path_id(&relative_hash_key(target_root, entry.path())),
                         };
 
                         for temp_entry_result in temp_fs_read_dir {

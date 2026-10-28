@@ -10,7 +10,10 @@ use crate::error::AppError;
 
 pub struct BackendState {
     pub file_tree: Mutex<Option<Dir>>, // Overall this is the global in mem rep of what was scanned, thread protecting not sure if needed online does say so since it is global and tauri BE is multi Th
-    pub local_appdata_path: Option<PathBuf>,
+    // Root directory snapshots are stored under (a "tempsnapshot" subfolder is
+    // joined onto this). Either a portable `data/` folder next to the executable
+    // or the OS app-data directory — see startup::resolve_storage_root.
+    pub snapshot_storage_root: Option<PathBuf>,
 }
 // ^ for that above consider not using a mutex and something else
 
@@ -34,6 +37,7 @@ pub enum Node<'a> {
     File(&'a File),
 }
 
+#[derive(Debug, Clone)]
 pub struct Dir {
     pub name: String,
     pub files: HashMap<String, File>,
@@ -220,9 +224,18 @@ impl Dir {
         state: tauri::State<BackendState>,
         prev_snapshot_file_path: String,
     ) -> Result<DirViewChildren, AppError> {
-        let mut temp_ht =
+        let temp_ht =
             database::query_children_stats_from_parent_id(&self, state, prev_snapshot_file_path)?;
 
+        Ok(self.diff_with_stats(temp_ht))
+    }
+
+    // Design fix: the comparison logic itself doesn't care whether `temp_ht`
+    // came from a DB query (live-vs-snapshot) or from flattening a second
+    // loaded snapshot tree (snapshot-vs-snapshot) — see
+    // database::compare_two_snapshots. Extracted so both share one
+    // implementation instead of diverging.
+    pub fn diff_with_stats(&self, mut temp_ht: HashMap<u64, database::SnapshotRecord>) -> DirViewChildren {
         let mut file_view_vec: Vec<FileView> = Vec::new();
         let mut dir_view_vec: Vec<DirView> = Vec::new();
 
@@ -343,10 +356,10 @@ impl Dir {
         file_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
         dir_view_vec.sort_by_key(|entry| Reverse(entry.meta.size));
 
-        Ok(DirViewChildren {
+        DirViewChildren {
             files: file_view_vec,
             subdirviews: dir_view_vec,
-        })
+        }
     }
 }
 
